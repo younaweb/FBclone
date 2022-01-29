@@ -1,6 +1,7 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Start from "./views/Start";
+import FeedPosts from './views/FeedPosts'
+import UserShow from './views/users/Show'
 Vue.use(VueRouter);
 
 export default new VueRouter({
@@ -9,7 +10,12 @@ export default new VueRouter({
         {
             path:'/',
             name:'home',
-            component:Start
+            component:FeedPosts
+        },
+        {
+            path:'/users/:userId',
+            name:'user.show',
+            component:UserShow
         }
     ]
 });

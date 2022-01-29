@@ -24,24 +24,36 @@ class RetreivePostsTest extends TestCase
         $response->assertStatus(200)
             ->assertJson([
                 'data' => [
-                    'data' => [
-                        'type' => 'posts',
-                        'post_id' => $posts->first()->id,
-                        'attributes' => [
-                            'body' => $posts->first()->body,
+                    [
+                        'data' => [
+                            'type' => 'posts',
+                            'post_id' => $posts->first()->id,
+                            'attributes' => [
+
+                                'body' => $posts->first()->body,
+                                'image'=>$posts->first()->image,
+                                'posted_at' => $posts->first()->created_at->diffForHumans(),
+                            ]
                         ]
-                        ],
-                    'data' => [
-                        'type' => 'posts',
-                        'post_id' => $posts->last()->id,
-                        'attributes' => [
-                            'body' => $posts->last()->body,
+                    ],
+                    [
+                        'data' => [
+                            'type' => 'posts',
+                            'post_id' => $posts->last()->id,
+                            'attributes' => [
+
+                                'body' => $posts->last()->body,
+                                'image'=>$posts->last()->image,
+                                'posted_at' => $posts->last()->created_at->diffForHumans(),
+                            ]
                         ]
-                    ]
+                    ],
                 ],
+
                 'links' => [
                     'self' => url('/posts')
                 ]
+
             ]);
     }
 
