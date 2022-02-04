@@ -64,8 +64,9 @@
 
         <!-- RIGHT NAV -->
         <ul class="hidden md:flex mx-4 items-center justify-center">
-            <li class="h-full hidden xl:flex">
-                <router-link :to="'/users/'+user.data.user_id" class="inline-flex items-center justify-center p-1 rounded-full hover:bg-gray-200 dark:hover:bg-dark-third mx-1">
+            <li v-if="userStatus">loading...</li>
+            <li class="h-full hidden xl:flex" v-else>
+                <router-link :to="'/users/'+authUser.data.user_id" class="inline-flex items-center justify-center p-1 rounded-full hover:bg-gray-200 dark:hover:bg-dark-third mx-1">
                     <img :src="'/images/tuat.jpg'" alt="Profile picture" class="rounded-full h-7 w-7">
                     <span class="mx-2 font-semibold dark:text-dark-txt">Tuat</span>
                 </router-link>
@@ -98,20 +99,19 @@
 </template>
 
 <script>
+
+import { mapGetters } from 'vuex';
 export default {
-    data(){
-        return{
-            user:null,
-        }
+    computed:{
+        ...mapGetters([
+
+            'authUser','userStatus'
+        ]
+        )
     },
+  
     mounted(){
-        axios.get('api/auth-user')
-        .then(res => {
-            this.user=res.data
-        })
-        .catch(err => {
-            console.error(err); 
-        })
+      
     }
 
 

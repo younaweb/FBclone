@@ -3,7 +3,7 @@
   <Nav></Nav>
   <div class="flex justify-center h-screen">
   <left-sidebar></left-sidebar>
-  <router-view></router-view>
+  <router-view :key="$route.fullPath"></router-view>
   <right-sidebar></right-sidebar>
   </div>
   </div>
@@ -14,10 +14,25 @@ import Nav from "./Nav.vue"
 import LeftSidebar from './LeftSidebar.vue'
 import RightSidebar from './RightSidebar.vue'
 export default {
+          name: "App",
+
   components:{
     Nav,
     LeftSidebar,
     RightSidebar
+  },
+  mounted(){
+    this.$store.dispatch('fetchAuthUser');
+    
+  },
+  created(){
+         this.$store.dispatch('fetchPageTitle',this.$route.meta.title)
+
+  },
+  watch:{
+    $route(to,from){
+      this.$store.commit('setTitle',to.meta.title)
+    }
   }
 
 }
