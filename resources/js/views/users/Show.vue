@@ -15,9 +15,15 @@
       </div>
     </div>
     <div class="buttons flex absolute bottom-0 font-bold right-0 text-xs text-gray-500 space-x-0 my-3.5 mr-3">
-      <button v-if="getFriendButtonText" @click="$store.dispatch('makeFriendRequest',getUser.data.user_id)" class="add border rounded-l-2xl rounded-r-sm border-gray-300 p-1 px-4 cursor-pointer hover:bg-gray-700 hover:text-white">{{getFriendButtonText}} </button>
-       <div class="add border rounded-r-2xl rounded-l-sm border-gray-300 p-1 px-4 cursor-pointer hover:bg-gray-700 hover:text-white">Bio</div> 
+      <button v-if="getFriendButtonText && getFriendButtonText!='Accept'" @click="$store.dispatch('makeFriendRequest',getUser.data.user_id)" class="add border rounded-l-2xl rounded-r-sm border-gray-300 p-1 px-4 cursor-pointer hover:bg-gray-700 hover:text-white">{{getFriendButtonText}} </button>
+      <!-- <div class="add border rounded-r-2xl rounded-l-sm border-gray-300 p-1 px-4 cursor-pointer hover:bg-gray-700 hover:text-white">Bio</div> -->
     </div>
+    <div class="buttons flex absolute bottom-0 font-bold right-8 text-xs text-gray-500 space-x-0 my-3.5 mr-3">
+      <button v-if="getFriendButtonText==='Accept'" @click="$store.dispatch('acceptFriendRequest',$route.params.userId)" class="add border rounded-l-2xl rounded-r-sm border-green-300 bg-green-400 p-1 px-4 cursor-pointer hover:bg-green-700 text-white">Accept </button>
+      <!-- <div class="add border rounded-r-2xl rounded-l-sm border-gray-300 p-1 px-4 cursor-pointer hover:bg-gray-700 hover:text-white">Bio</div> -->
+      <button v-if="getFriendButtonText==='Accept'" @click="$store.dispatch('ignoreFriendRequest',$route.params.userId)" class="add border rounded-r-2xl rounded-l-sm border-gray-300 p-1 px-4 cursor-pointer hover:bg-red-700 hover:text-white">Ignore </button>
+    </div>
+   
   </div>
 
   <div v-if="! postsLoading && posts.data.length==0">No posts yet ...get started</div>

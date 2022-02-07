@@ -1,7 +1,6 @@
 const state={
     user:null,
     userStatus:null,
-    friendButtonText:null,
 };
 const getters={
    
@@ -14,8 +13,17 @@ const getters={
     getFriendShip:state=>{
         return state.user.data.attributes.friendship;
     },
-    getFriendButtonText:state=>{
-        return state.friendButtonText;
+    getFriendButtonText:(state,getters,rootState)=>{
+        if(getters.getFriendShip==null){
+            return 'Add Friend'
+        }else if(getters.getFriendShip.data.attributes.confirmed_at==null && 
+            getters.getFriendShip.data.attributes.friend_id != rootState.User.user.data.user_id){
+           return 'Pending Friend Request'
+
+        }else if(getters.getFriendShip.data.attributes.confirmed_at!=null){
+            return ''
+        }
+        return 'Accept';
     }
 
 };
@@ -27,7 +35,6 @@ const actions={
         .then((res) => {
           this.commit('setUser', res.data);
           this.commit('setUserStatus','success')
-        this.dispatch('fetchFriendButtonText')
         })
         .catch((err) => {
             this.commit('setUserStatus','error')
@@ -37,25 +44,42 @@ const actions={
     },
     makeFriendRequest({commit,getters},friendId){
         if(getters.getFriendButtonText=='Add Friend'){
-            this.commit('setFriendButtonText','loading')
+
         axios.post('/api/friend-request',{'friend_id':friendId})
         .then(res => {
-            this.commit('setFriendButtonText','Pending Friend Request')
+            this.commit('setFriendShip',res.data)
         })
         .catch(err => {
-            this.commit('setFriendButtonText','Add Friend')
         })
+
         }
         
     },
-    fetchFriendButtonText({commit,getters}){
-        if(getters.getFriendShip==null){
-            this.commit('setFriendButtonText','Add Friend')
-        }else if(getters.getFriendShip.data.attributes.confirmed_at==null){
-            this.commit('setFriendButtonText','Pending Friend Request')
+    acceptFriendRequest({commit,getters},userId){
 
-        }
-    }
+        axios.post('/api/friend-request-response',{'user_id':userId})
+        .then(res => {
+            this.commit('setFriendShip',res.data)
+        })
+        .catch(err => {
+        })
+
+        
+        
+    },
+    ignoreFriendRequest({commit,getters},userId){
+
+        axios.delete('/api/friend-request-response/delete',{data:{'user_id':userId}})
+        .then(res => {
+            this.commit('setFriendShip',null)
+        })
+        .catch(err => {
+        })
+
+        
+        
+    },
+ 
 
 };
 const mutations={
@@ -65,8 +89,8 @@ const mutations={
     setUserStatus(state,userStatus){
         state.userStatus=userStatus
     },
-    setFriendButtonText(state,text){
-        state.friendButtonText=text;
+    setFriendShip(state,text){
+        state.user.data.attributes.friendship=text;
     }
 };
 

@@ -55,7 +55,6 @@ class FriendRequestTest extends TestCase
         $response=$this->post('/api/friend-request-response',[
             
             'user_id'=>$user->id,
-            'friend_id'=>$anotherUser->id,
         ])
         ->assertStatus(200);
         $friendreq=Friend::first();
@@ -66,6 +65,8 @@ class FriendRequestTest extends TestCase
                 'friend_id'=>$friendreq->id,
                 'attributes'=>[
                     'confirmed_at'=>$friendreq->confirmed_at->diffForHumans(),
+                    'friend_id'=>$friendreq->friend_id,
+                    'user_id'=>$friendreq->user_id,
                 ]
                 ],
                 'links'=>[

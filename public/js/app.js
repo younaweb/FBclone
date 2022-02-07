@@ -5265,6 +5265,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Nav_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Nav.vue */ "./resources/js/components/Nav.vue");
 /* harmony import */ var _LeftSidebar_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./LeftSidebar.vue */ "./resources/js/components/LeftSidebar.vue");
 /* harmony import */ var _RightSidebar_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./RightSidebar.vue */ "./resources/js/components/RightSidebar.vue");
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -5276,6 +5283,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+
 
 
 
@@ -5287,14 +5295,15 @@ __webpack_require__.r(__webpack_exports__);
     RightSidebar: _RightSidebar_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   },
   mounted: function mounted() {
-    this.$store.dispatch('fetchAuthUser');
+    this.$store.dispatch("fetchAuthUser");
   },
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_3__.mapGetters)(["authUser"])),
   created: function created() {
-    this.$store.dispatch('fetchPageTitle', this.$route.meta.title);
+    this.$store.dispatch("fetchPageTitle", this.$route.meta.title);
   },
   watch: {
     $route: function $route(to, from) {
-      this.$store.commit('setTitle', to.meta.title);
+      this.$store.commit("setTitle", to.meta.title);
     }
   }
 });
@@ -6390,6 +6399,12 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6610,8 +6625,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 var state = {
   user: null,
-  userStatus: null,
-  friendButtonText: null
+  userStatus: null
 };
 var getters = {
   getUser: function getUser(state) {
@@ -6623,8 +6637,16 @@ var getters = {
   getFriendShip: function getFriendShip(state) {
     return state.user.data.attributes.friendship;
   },
-  getFriendButtonText: function getFriendButtonText(state) {
-    return state.friendButtonText;
+  getFriendButtonText: function getFriendButtonText(state, getters, rootState) {
+    if (getters.getFriendShip == null) {
+      return 'Add Friend';
+    } else if (getters.getFriendShip.data.attributes.confirmed_at == null && getters.getFriendShip.data.attributes.friend_id != rootState.User.user.data.user_id) {
+      return 'Pending Friend Request';
+    } else if (getters.getFriendShip.data.attributes.confirmed_at != null) {
+      return '';
+    }
+
+    return 'Accept';
   }
 };
 var actions = {
@@ -6638,8 +6660,6 @@ var actions = {
       _this.commit('setUser', res.data);
 
       _this.commit('setUserStatus', 'success');
-
-      _this.dispatch('fetchFriendButtonText');
     })["catch"](function (err) {
       _this.commit('setUserStatus', 'error');
     });
@@ -6651,25 +6671,36 @@ var actions = {
         getters = _ref2.getters;
 
     if (getters.getFriendButtonText == 'Add Friend') {
-      this.commit('setFriendButtonText', 'loading');
       axios.post('/api/friend-request', {
         'friend_id': friendId
       }).then(function (res) {
-        _this2.commit('setFriendButtonText', 'Pending Friend Request');
-      })["catch"](function (err) {
-        _this2.commit('setFriendButtonText', 'Add Friend');
-      });
+        _this2.commit('setFriendShip', res.data);
+      })["catch"](function (err) {});
     }
   },
-  fetchFriendButtonText: function fetchFriendButtonText(_ref3) {
+  acceptFriendRequest: function acceptFriendRequest(_ref3, userId) {
+    var _this3 = this;
+
     var commit = _ref3.commit,
         getters = _ref3.getters;
+    axios.post('/api/friend-request-response', {
+      'user_id': userId
+    }).then(function (res) {
+      _this3.commit('setFriendShip', res.data);
+    })["catch"](function (err) {});
+  },
+  ignoreFriendRequest: function ignoreFriendRequest(_ref4, userId) {
+    var _this4 = this;
 
-    if (getters.getFriendShip == null) {
-      this.commit('setFriendButtonText', 'Add Friend');
-    } else if (getters.getFriendShip.data.attributes.confirmed_at == null) {
-      this.commit('setFriendButtonText', 'Pending Friend Request');
-    }
+    var commit = _ref4.commit,
+        getters = _ref4.getters;
+    axios["delete"]('/api/friend-request-response/delete', {
+      data: {
+        'user_id': userId
+      }
+    }).then(function (res) {
+      _this4.commit('setFriendShip', null);
+    })["catch"](function (err) {});
   }
 };
 var mutations = {
@@ -6679,8 +6710,8 @@ var mutations = {
   setUserStatus: function setUserStatus(state, userStatus) {
     state.userStatus = userStatus;
   },
-  setFriendButtonText: function setFriendButtonText(state, text) {
-    state.friendButtonText = text;
+  setFriendShip: function setFriendShip(state, text) {
+    state.user.data.attributes.friendship = text;
   }
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -30500,26 +30531,28 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    [
-      _c("Nav"),
-      _vm._v(" "),
-      _c(
+  return _vm.authUser
+    ? _c(
         "div",
-        { staticClass: "flex justify-center h-screen" },
         [
-          _c("left-sidebar"),
+          _c("Nav"),
           _vm._v(" "),
-          _c("router-view", { key: _vm.$route.fullPath }),
-          _vm._v(" "),
-          _c("right-sidebar"),
+          _c(
+            "div",
+            { staticClass: "flex justify-center h-screen" },
+            [
+              _c("left-sidebar"),
+              _vm._v(" "),
+              _c("router-view", { key: _vm.$route.fullPath }),
+              _vm._v(" "),
+              _c("right-sidebar"),
+            ],
+            1
+          ),
         ],
         1
-      ),
-    ],
-    1
-  )
+      )
+    : _vm._e()
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -32408,7 +32441,7 @@ var render = function () {
                     "buttons flex absolute bottom-0 font-bold right-0 text-xs text-gray-500 space-x-0 my-3.5 mr-3",
                 },
                 [
-                  _vm.getFriendButtonText
+                  _vm.getFriendButtonText && _vm.getFriendButtonText != "Accept"
                     ? _c(
                         "button",
                         {
@@ -32426,15 +32459,53 @@ var render = function () {
                         [_vm._v(_vm._s(_vm.getFriendButtonText) + " ")]
                       )
                     : _vm._e(),
+                ]
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "buttons flex absolute bottom-0 font-bold right-8 text-xs text-gray-500 space-x-0 my-3.5 mr-3",
+                },
+                [
+                  _vm.getFriendButtonText === "Accept"
+                    ? _c(
+                        "button",
+                        {
+                          staticClass:
+                            "add border rounded-l-2xl rounded-r-sm border-green-300 bg-green-400 p-1 px-4 cursor-pointer hover:bg-green-700 text-white",
+                          on: {
+                            click: function ($event) {
+                              return _vm.$store.dispatch(
+                                "acceptFriendRequest",
+                                _vm.$route.params.userId
+                              )
+                            },
+                          },
+                        },
+                        [_vm._v("Accept ")]
+                      )
+                    : _vm._e(),
                   _vm._v(" "),
-                  _c(
-                    "div",
-                    {
-                      staticClass:
-                        "add border rounded-r-2xl rounded-l-sm border-gray-300 p-1 px-4 cursor-pointer hover:bg-gray-700 hover:text-white",
-                    },
-                    [_vm._v("Bio")]
-                  ),
+                  _vm.getFriendButtonText === "Accept"
+                    ? _c(
+                        "button",
+                        {
+                          staticClass:
+                            "add border rounded-r-2xl rounded-l-sm border-gray-300 p-1 px-4 cursor-pointer hover:bg-red-700 hover:text-white",
+                          on: {
+                            click: function ($event) {
+                              return _vm.$store.dispatch(
+                                "ignoreFriendRequest",
+                                _vm.$route.params.userId
+                              )
+                            },
+                          },
+                        },
+                        [_vm._v("Ignore ")]
+                      )
+                    : _vm._e(),
                 ]
               ),
             ]

@@ -11,38 +11,42 @@ class FriendRequestController extends Controller
 {
     public function store()
     {
-        $data=request()->validate([
-            'user_id'=>'',
-            'friend_id'=>'',
-          
+        $data = request()->validate([
+            'user_id' => '',
+
         ]);
-        $fr=Friend::where('user_id',$data['user_id'])->where('friend_id',$data['friend_id'])->first();
-        $fr->update([
-            'confirmed_at'=>now(),
-            'status'=>1
+        try {
+            $friendRequest = Friend::where('user_id', $data['user_id'])
+                ->where('friend_id', auth()->user()->id)
+                ->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return response()->json([], 404);
+        }
+
+        $friendRequest->update([
+            'confirmed_at' => now(),
+            'status' => 1
         ]);
 
-        return new ResourcesFriend($fr);
+        return new ResourcesFriend($friendRequest);
     }
 
     public function destroy()
     {
-        $data=request()->validate([
-            'user_id'=>'required',
-          
-        ]);
-        try{
-            $fr=Friend::where('user_id',$data['user_id'])
-            ->where('friend_id',auth()->user()->id)
-            ->firstOrFail()
-            ->delete();
-    
+        $data = request()->validate([
+            'user_id' => 'required',
 
-        }catch(ModelNotFoundException $e){
-            return response()->json([],404);
+        ]);
+        try {
+            $fr = Friend::where('user_id', $data['user_id'])
+                ->where('friend_id', auth()->user()->id)
+                ->firstOrFail()
+                ->delete();
+        } catch (ModelNotFoundException $e) {
+            return response()->json([], 404);
         }
-       
-       
-        return response()->json([],204);
+
+
+        return response()->json([], 204);
     }
 }
