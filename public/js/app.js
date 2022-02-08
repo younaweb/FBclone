@@ -6405,6 +6405,104 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6414,24 +6512,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     ScaleLoader: vue_spinner_src_ScaleLoader_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
   data: function data() {
-    return {
-      postsLoading: true,
-      posts: null
-    };
+    return {};
   },
   mounted: function mounted() {
-    var _this = this;
-
-    this.$store.dispatch('fetchUser', this.$route.params.userId);
-    axios.get("/api/users/" + this.$route.params.userId + '/posts').then(function (res) {
-      _this.posts = res.data;
-    })["catch"](function (err) {
-      console.error(err);
-    })["finally"](function () {
-      _this.postsLoading = false;
-    });
+    this.$store.dispatch("fetchUser", this.$route.params.userId);
+    this.$store.dispatch("fetchUserPosts", this.$route.params.userId);
   },
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(['getUser', 'getUserStatus', 'getFriendButtonText']))
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapGetters)(["getUser", "getStatus", "getFriendButtonText", "getPosts"]))
 });
 
 /***/ }),
@@ -6625,28 +6712,40 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 var state = {
   user: null,
-  userStatus: null
+  userStatus: null,
+  postsStatus: null,
+  posts: null
 };
 var getters = {
   getUser: function getUser(state) {
     return state.user;
   },
-  getUserStatus: function getUserStatus(state) {
-    return state.userStatus;
+  getPosts: function getPosts(state) {
+    return state.posts;
+  },
+  getStatus: function getStatus(state) {
+    return {
+      user: state.userStatus,
+      posts: state.postsStatus
+    };
   },
   getFriendShip: function getFriendShip(state) {
     return state.user.data.attributes.friendship;
   },
   getFriendButtonText: function getFriendButtonText(state, getters, rootState) {
-    if (getters.getFriendShip == null) {
-      return 'Add Friend';
-    } else if (getters.getFriendShip.data.attributes.confirmed_at == null && getters.getFriendShip.data.attributes.friend_id != rootState.User.user.data.user_id) {
-      return 'Pending Friend Request';
-    } else if (getters.getFriendShip.data.attributes.confirmed_at != null) {
-      return '';
+    if (rootState.User.user.data.user_id == getters.getUser.data.user_id) {
+      return "";
     }
 
-    return 'Accept';
+    if (getters.getFriendShip == null) {
+      return "Add Friend";
+    } else if (getters.getFriendShip.data.attributes.confirmed_at == null && getters.getFriendShip.data.attributes.friend_id != rootState.User.user.data.user_id) {
+      return "Pending Friend Request";
+    } else if (getters.getFriendShip.data.attributes.confirmed_at != null) {
+      return "";
+    }
+
+    return "Accept";
   }
 };
 var actions = {
@@ -6655,51 +6754,65 @@ var actions = {
 
     var commit = _ref.commit,
         actions = _ref.actions;
-    this.commit('setUserStatus', 'loading');
+    this.commit("setUserStatus", "loading");
     axios.get("/api/users/" + userId).then(function (res) {
-      _this.commit('setUser', res.data);
+      _this.commit("setUser", res.data);
 
-      _this.commit('setUserStatus', 'success');
+      _this.commit("setUserStatus", "success");
     })["catch"](function (err) {
-      _this.commit('setUserStatus', 'error');
+      _this.commit("setUserStatus", "error");
     });
   },
-  makeFriendRequest: function makeFriendRequest(_ref2, friendId) {
+  fetchUserPosts: function fetchUserPosts(_ref2, userId) {
     var _this2 = this;
 
     var commit = _ref2.commit,
-        getters = _ref2.getters;
+        actions = _ref2.actions;
+    this.commit("setPostsStatus", "loading");
+    axios.get("/api/users/" + userId + "/posts").then(function (res) {
+      _this2.commit("setUserPosts", res.data);
 
-    if (getters.getFriendButtonText == 'Add Friend') {
-      axios.post('/api/friend-request', {
-        'friend_id': friendId
-      }).then(function (res) {
-        _this2.commit('setFriendShip', res.data);
-      })["catch"](function (err) {});
-    }
+      _this2.commit("setPostsStatus", "success");
+    })["catch"](function (err) {
+      _this2.commit("setPostsStatus", "error");
+    });
   },
-  acceptFriendRequest: function acceptFriendRequest(_ref3, userId) {
+  makeFriendRequest: function makeFriendRequest(_ref3, friendId) {
     var _this3 = this;
 
     var commit = _ref3.commit,
         getters = _ref3.getters;
-    axios.post('/api/friend-request-response', {
-      'user_id': userId
-    }).then(function (res) {
-      _this3.commit('setFriendShip', res.data);
-    })["catch"](function (err) {});
+
+    if (getters.getFriendButtonText == "Add Friend") {
+      axios.post("/api/friend-request", {
+        friend_id: friendId
+      }).then(function (res) {
+        _this3.commit("setFriendShip", res.data);
+      })["catch"](function (err) {});
+    }
   },
-  ignoreFriendRequest: function ignoreFriendRequest(_ref4, userId) {
+  acceptFriendRequest: function acceptFriendRequest(_ref4, userId) {
     var _this4 = this;
 
     var commit = _ref4.commit,
         getters = _ref4.getters;
-    axios["delete"]('/api/friend-request-response/delete', {
+    axios.post("/api/friend-request-response", {
+      user_id: userId
+    }).then(function (res) {
+      _this4.commit("setFriendShip", res.data);
+    })["catch"](function (err) {});
+  },
+  ignoreFriendRequest: function ignoreFriendRequest(_ref5, userId) {
+    var _this5 = this;
+
+    var commit = _ref5.commit,
+        getters = _ref5.getters;
+    axios["delete"]("/api/friend-request-response/delete", {
       data: {
-        'user_id': userId
+        user_id: userId
       }
     }).then(function (res) {
-      _this4.commit('setFriendShip', null);
+      _this5.commit("setFriendShip", null);
     })["catch"](function (err) {});
   }
 };
@@ -6707,8 +6820,14 @@ var mutations = {
   setUser: function setUser(state, user) {
     state.user = user;
   },
+  setUserPosts: function setUserPosts(state, posts) {
+    state.posts = posts;
+  },
   setUserStatus: function setUserStatus(state, userStatus) {
     state.userStatus = userStatus;
+  },
+  setPostsStatus: function setPostsStatus(state, postsStatus) {
+    state.postsStatus = postsStatus;
   },
   setFriendShip: function setFriendShip(state, text) {
     state.user.data.attributes.friendship = text;
@@ -11843,7 +11962,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.dark{color:rgba(55, 65, 81,1);}\n\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.dark {\n  color: rgba(55, 65, 81, 1);\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -32384,13 +32503,14 @@ var render = function () {
     "div",
     { staticClass: "w-full lg:w-2/3 xl:w-2/5 pt-32 lg:pt-16 px-2" },
     [
-      _vm.getUserStatus == "loading"
+      _vm.getStatus.user == "loading"
         ? _c("div", [_c("scale-loader")], 1)
-        : _c(
+        : _vm.getUser.data && _vm.getStatus.user == "success"
+        ? _c(
             "div",
             {
               staticClass:
-                "card border w-full hover:shadow-none relative flex flex-col mx-auto shadow-lg m-5",
+                "\n      card\n      border\n      w-full\n      hover:shadow-none\n      relative\n      flex flex-col\n      mx-auto\n      shadow-lg\n      m-5\n    ",
             },
             [
               _c("img", {
@@ -32419,7 +32539,7 @@ var render = function () {
                     { staticClass: "title mt-11 ml-3 font-bold flex flex-col" },
                     [
                       _c("div", { staticClass: "name break-words" }, [
-                        _vm._v(_vm._s(_vm.getUser.data.attributes.name) + " "),
+                        _vm._v(_vm._s(_vm.getUser.data.attributes.name)),
                       ]),
                       _vm._v(" "),
                       _c(
@@ -32427,7 +32547,7 @@ var render = function () {
                         {
                           staticClass: "add font-semibold text-sm italic dark",
                         },
-                        [_vm._v("Laravel developer")]
+                        [_vm._v("\n          Laravel developer\n        ")]
                       ),
                     ]
                   ),
@@ -32438,7 +32558,7 @@ var render = function () {
                 "div",
                 {
                   staticClass:
-                    "buttons flex absolute bottom-0 font-bold right-0 text-xs text-gray-500 space-x-0 my-3.5 mr-3",
+                    "\n        buttons\n        flex\n        absolute\n        bottom-0\n        font-bold\n        right-0\n        text-xs text-gray-500\n        space-x-0\n        my-3.5\n        mr-3\n      ",
                 },
                 [
                   _vm.getFriendButtonText && _vm.getFriendButtonText != "Accept"
@@ -32446,7 +32566,7 @@ var render = function () {
                         "button",
                         {
                           staticClass:
-                            "add border rounded-l-2xl rounded-r-sm border-gray-300 p-1 px-4 cursor-pointer hover:bg-gray-700 hover:text-white",
+                            "\n          add\n          border\n          rounded-l-2xl rounded-r-sm\n          border-gray-300\n          p-1\n          px-4\n          cursor-pointer\n          hover:bg-gray-700 hover:text-white\n        ",
                           on: {
                             click: function ($event) {
                               return _vm.$store.dispatch(
@@ -32456,7 +32576,13 @@ var render = function () {
                             },
                           },
                         },
-                        [_vm._v(_vm._s(_vm.getFriendButtonText) + " ")]
+                        [
+                          _vm._v(
+                            "\n        " +
+                              _vm._s(_vm.getFriendButtonText) +
+                              "\n      "
+                          ),
+                        ]
                       )
                     : _vm._e(),
                 ]
@@ -32466,7 +32592,7 @@ var render = function () {
                 "div",
                 {
                   staticClass:
-                    "buttons flex absolute bottom-0 font-bold right-8 text-xs text-gray-500 space-x-0 my-3.5 mr-3",
+                    "\n        buttons\n        flex\n        absolute\n        bottom-0\n        font-bold\n        right-8\n        text-xs text-gray-500\n        space-x-0\n        my-3.5\n        mr-3\n      ",
                 },
                 [
                   _vm.getFriendButtonText === "Accept"
@@ -32474,7 +32600,7 @@ var render = function () {
                         "button",
                         {
                           staticClass:
-                            "add border rounded-l-2xl rounded-r-sm border-green-300 bg-green-400 p-1 px-4 cursor-pointer hover:bg-green-700 text-white",
+                            "\n          add\n          border\n          rounded-l-2xl rounded-r-sm\n          border-green-300\n          bg-green-400\n          p-1\n          px-4\n          cursor-pointer\n          hover:bg-green-700\n          text-white\n        ",
                           on: {
                             click: function ($event) {
                               return _vm.$store.dispatch(
@@ -32484,7 +32610,7 @@ var render = function () {
                             },
                           },
                         },
-                        [_vm._v("Accept ")]
+                        [_vm._v("\n        Accept\n      ")]
                       )
                     : _vm._e(),
                   _vm._v(" "),
@@ -32493,7 +32619,7 @@ var render = function () {
                         "button",
                         {
                           staticClass:
-                            "add border rounded-r-2xl rounded-l-sm border-gray-300 p-1 px-4 cursor-pointer hover:bg-red-700 hover:text-white",
+                            "\n          add\n          border\n          rounded-r-2xl rounded-l-sm\n          border-gray-300\n          p-1\n          px-4\n          cursor-pointer\n          hover:bg-red-700 hover:text-white\n        ",
                           on: {
                             click: function ($event) {
                               return _vm.$store.dispatch(
@@ -32503,24 +32629,23 @@ var render = function () {
                             },
                           },
                         },
-                        [_vm._v("Ignore ")]
+                        [_vm._v("\n        Ignore\n      ")]
                       )
                     : _vm._e(),
                 ]
               ),
             ]
-          ),
-      _vm._v(" "),
-      !_vm.postsLoading && _vm.posts.data.length == 0
-        ? _c("div", [_vm._v("No posts yet ...get started")])
+          )
         : _vm._e(),
       _vm._v(" "),
       _c(
         "div",
         [
-          _vm.postsLoading
+          _vm.getStatus.posts == "loading"
             ? _c("div", [_c("scale-loader")], 1)
-            : _vm._l(_vm.posts.data, function (post) {
+            : _vm.getPosts.data.length < 1
+            ? _c("div", [_vm._v("\n      No posts yet ...get started\n    ")])
+            : _vm._l(_vm.getPosts.data, function (post) {
                 return _c("post", {
                   key: post.data.post_id,
                   attrs: { post: post },
