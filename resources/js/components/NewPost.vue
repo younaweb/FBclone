@@ -5,7 +5,12 @@
                     <img src="images/tuat.jpg" alt="Profile picture" class="w-10 h-10 rounded-full">
                     
                     <input class="flex-1 bg-gray-100 rounded-full flex items-center justify-start pl-4 cursor-pointer dark:bg-dark-third text-gray-500 text-lg dark:text-dark-txt"
-                    placeholder="What's on your mind, Tuat?">
+                    placeholder="What's new ?" v-model="postMessage">
+                    <transition name="fade">
+                    <button v-if="postMessage" @click="$store.dispatch('storeNewMessage')" class="w-1/3 bg-gray-100 flex space-x-2 justify-center items-center hover:bg-gray-300 dark:hover:bg-dark-third text-xl sm:text-3xl py-2 rounded-lg cursor-pointer text-blue-500">
+                        <i class='bx bx-message-add'></i>
+                    </button>
+                    </transition>
                        
                     
                 </div>
@@ -28,11 +33,29 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 export default {
+    computed:{
+        postMessage:{
+            get(){
+                return this.$store.getters.postMessage
+            },
+            set(postMessage){
+                this.$store.commit('updateMessage',postMessage)
+            }
+
+        }
+        
+    },
 
 }
 </script>
 
-<style>
-
+<style scoped>
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .5s;
+    }
+    .fade-enter, .fade-leave-to {
+        opacity: 0;
+    }
 </style>

@@ -24,10 +24,10 @@ class PostController extends Controller
     public function store()
     {
         $data=request()->validate([
-            'data.attributes.body'=>'',
+            'body'=>'',
         ]);
        
-        $post=request()->user()->posts()->create($data['data']['attributes']);
+        $post=request()->user()->posts()->create($data);
       return new ResourcesPost($post);
     }
 }
