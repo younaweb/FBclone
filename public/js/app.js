@@ -31480,9 +31480,18 @@ var render = function () {
             ],
             staticClass:
               "flex-1 bg-gray-100 rounded-full flex items-center justify-start pl-4 cursor-pointer dark:bg-dark-third text-gray-500 text-lg dark:text-dark-txt",
-            attrs: { placeholder: "What's new ?" },
+            attrs: { placeholder: "What's new ?", debounce: "500" },
             domProps: { value: _vm.postMessage },
             on: {
+              keyup: function ($event) {
+                if (
+                  !$event.type.indexOf("key") &&
+                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                ) {
+                  return null
+                }
+                return _vm.$store.dispatch("storeNewMessage")
+              },
               input: function ($event) {
                 if ($event.target.composing) {
                   return
