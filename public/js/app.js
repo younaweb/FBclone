@@ -6092,6 +6092,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ["post"]
 });
@@ -6733,6 +6735,18 @@ var actions = {
 
       _this2.commit('pushMessage', res.data);
     })["catch"](function (err) {});
+  },
+  makeLike: function makeLike(_ref3, data) {
+    var _this3 = this;
+
+    var commit = _ref3.commit,
+        state = _ref3.state;
+    axios.post('/api/posts/' + data.postId + '/like').then(function (res) {
+      _this3.commit('pushLike', {
+        like: res.data,
+        key: data.postKey
+      });
+    })["catch"](function (err) {});
   }
 };
 var mutations = {
@@ -6747,6 +6761,9 @@ var mutations = {
   },
   pushMessage: function pushMessage(state, message) {
     state.newsPosts.data.unshift(message);
+  },
+  pushLike: function pushLike(state, data) {
+    state.newsPosts.data[data.key].data.attributes.likes = data.like;
   }
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -31677,9 +31694,74 @@ var render = function () {
           ])
         : _vm._e(),
       _vm._v(" "),
-      _vm._m(1),
+      _c("div", { staticClass: "px-4 py-2" }, [
+        _c("div", { staticClass: "flex items-center justify-between" }, [
+          _c("div", { staticClass: "flex flex-row-reverse items-center" }, [
+            _c(
+              "span",
+              { staticClass: "ml-2 text-gray-500 dark:text-dark-txt" },
+              [
+                _vm._v(
+                  _vm._s(_vm.post.data.attributes.likes.like_count) + " likes"
+                ),
+              ]
+            ),
+            _vm._v(" "),
+            _vm._m(1),
+            _vm._v(" "),
+            _vm._m(2),
+            _vm._v(" "),
+            _vm._m(3),
+          ]),
+          _vm._v(" "),
+          _vm._m(4),
+        ]),
+      ]),
       _vm._v(" "),
-      _vm._m(2),
+      _c("div", { staticClass: "py-2 px-4" }, [
+        _c(
+          "div",
+          {
+            staticClass:
+              "\n        border border-gray-200\n        dark:border-dark-third\n        border-l-0 border-r-0\n        py-1\n      ",
+          },
+          [
+            _c("div", { staticClass: "flex space-x-2" }, [
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "\n            w-1/3\n            flex\n            space-x-2\n            justify-center\n            items-center\n            hover:bg-gray-100\n            dark:hover:bg-dark-third\n            text-xl\n            py-2\n            rounded-lg\n            cursor-pointer\n            text-gray-500\n            dark:text-dark-txt\n          ",
+                  class: [
+                    _vm.post.data.attributes.likes.user_like_post
+                      ? "bg-blue-600 text-white hover:bg-blue-400"
+                      : "",
+                  ],
+                  on: {
+                    click: function ($event) {
+                      return _vm.$store.dispatch("makeLike", {
+                        postId: _vm.post.data.post_id,
+                        postKey: _vm.$vnode.key,
+                      })
+                    },
+                  },
+                },
+                [
+                  _c("i", { staticClass: "bx bx-like" }),
+                  _vm._v(" "),
+                  _c("span", { staticClass: "text-sm font-semibold" }, [
+                    _vm._v("Like"),
+                  ]),
+                ]
+              ),
+              _vm._v(" "),
+              _vm._m(5),
+              _vm._v(" "),
+              _vm._m(6),
+            ]),
+          ]
+        ),
+      ]),
       _vm._v(" "),
       _c("div", { staticClass: "py-2 px-4" }, [
         _c("div", { staticClass: "flex space-x-2" }, [
@@ -31689,9 +31771,9 @@ var render = function () {
           }),
           _vm._v(" "),
           _c("div", [
-            _vm._m(3),
+            _vm._m(7),
             _vm._v(" "),
-            _vm._m(4),
+            _vm._m(8),
             _vm._v(" "),
             _c("div", { staticClass: "flex space-x-2" }, [
               _c("img", {
@@ -31699,7 +31781,7 @@ var render = function () {
                 attrs: { src: "/images/avt-7.jpg", alt: "Profile picture" },
               }),
               _vm._v(" "),
-              _vm._m(5),
+              _vm._m(9),
             ]),
           ]),
         ]),
@@ -31711,9 +31793,9 @@ var render = function () {
           }),
           _vm._v(" "),
           _c("div", [
-            _vm._m(6),
+            _vm._m(10),
             _vm._v(" "),
-            _vm._m(7),
+            _vm._m(11),
             _vm._v(" "),
             _c("div", { staticClass: "flex space-x-2" }, [
               _c("img", {
@@ -31721,7 +31803,7 @@ var render = function () {
                 attrs: { src: "/images/avt-7.jpg", alt: "Profile picture" },
               }),
               _vm._v(" "),
-              _vm._m(8),
+              _vm._m(12),
             ]),
           ]),
         ]),
@@ -31734,7 +31816,7 @@ var render = function () {
             attrs: { src: "/images/tuat.jpg", alt: "Profile picture" },
           }),
           _vm._v(" "),
-          _vm._m(9),
+          _vm._m(13),
         ]),
       ]),
     ]
@@ -31758,110 +31840,86 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "px-4 py-2" }, [
-      _c("div", { staticClass: "flex items-center justify-between" }, [
-        _c("div", { staticClass: "flex flex-row-reverse items-center" }, [
-          _c("span", { staticClass: "ml-2 text-gray-500 dark:text-dark-txt" }, [
-            _vm._v("999"),
-          ]),
-          _vm._v(" "),
-          _c(
-            "span",
-            {
-              staticClass:
-                "\n            rounded-full\n            grid\n            place-items-center\n            text-2xl\n            -ml-1\n            text-red-800\n          ",
-            },
-            [_c("i", { staticClass: "bx bxs-angry" })]
-          ),
-          _vm._v(" "),
-          _c(
-            "span",
-            {
-              staticClass:
-                "\n            rounded-full\n            grid\n            place-items-center\n            text-2xl\n            -ml-1\n            text-red-500\n          ",
-            },
-            [_c("i", { staticClass: "bx bxs-heart-circle" })]
-          ),
-          _vm._v(" "),
-          _c(
-            "span",
-            {
-              staticClass:
-                "\n            rounded-full\n            grid\n            place-items-center\n            text-2xl\n            -ml-1\n            text-yellow-500\n          ",
-            },
-            [_c("i", { staticClass: "bx bx-happy-alt" })]
-          ),
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "text-gray-500 dark:text-dark-txt" }, [
-          _c("span", [_vm._v("90 comments")]),
-          _vm._v(" "),
-          _c("span", [_vm._v("66 Shares")]),
-        ]),
-      ]),
+    return _c(
+      "span",
+      {
+        staticClass:
+          "\n            rounded-full\n            grid\n            place-items-center\n            text-2xl\n            -ml-1\n            text-red-800\n          ",
+      },
+      [_c("i", { staticClass: "bx bxs-angry" })]
+    )
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "span",
+      {
+        staticClass:
+          "\n            rounded-full\n            grid\n            place-items-center\n            text-2xl\n            -ml-1\n            text-red-500\n          ",
+      },
+      [_c("i", { staticClass: "bx bxs-heart-circle" })]
+    )
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "span",
+      {
+        staticClass:
+          "\n            rounded-full\n            grid\n            place-items-center\n            text-2xl\n            -ml-1\n            text-yellow-500\n          ",
+      },
+      [_c("i", { staticClass: "bx bx-happy-alt" })]
+    )
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "text-gray-500 dark:text-dark-txt" }, [
+      _c("span", [_vm._v("90 comments")]),
+      _vm._v(" "),
+      _c("span", [_vm._v("66 Shares")]),
     ])
   },
   function () {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "py-2 px-4" }, [
-      _c(
-        "div",
-        {
-          staticClass:
-            "\n        border border-gray-200\n        dark:border-dark-third\n        border-l-0 border-r-0\n        py-1\n      ",
-        },
-        [
-          _c("div", { staticClass: "flex space-x-2" }, [
-            _c(
-              "div",
-              {
-                staticClass:
-                  "\n            w-1/3\n            flex\n            space-x-2\n            justify-center\n            items-center\n            hover:bg-gray-100\n            dark:hover:bg-dark-third\n            text-xl\n            py-2\n            rounded-lg\n            cursor-pointer\n            text-gray-500\n            dark:text-dark-txt\n          ",
-              },
-              [
-                _c("i", { staticClass: "bx bx-like" }),
-                _vm._v(" "),
-                _c("span", { staticClass: "text-sm font-semibold" }, [
-                  _vm._v("Like"),
-                ]),
-              ]
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass:
-                  "\n            w-1/3\n            flex\n            space-x-2\n            justify-center\n            items-center\n            hover:bg-gray-100\n            dark:hover:bg-dark-third\n            text-xl\n            py-2\n            rounded-lg\n            cursor-pointer\n            text-gray-500\n            dark:text-dark-txt\n          ",
-              },
-              [
-                _c("i", { staticClass: "bx bx-comment" }),
-                _vm._v(" "),
-                _c("span", { staticClass: "text-sm font-semibold" }, [
-                  _vm._v("Comment"),
-                ]),
-              ]
-            ),
-            _vm._v(" "),
-            _c(
-              "div",
-              {
-                staticClass:
-                  "\n            w-1/3\n            flex\n            space-x-2\n            justify-center\n            items-center\n            hover:bg-gray-100\n            dark:hover:bg-dark-third\n            text-xl\n            py-2\n            rounded-lg\n            cursor-pointer\n            text-gray-500\n            dark:text-dark-txt\n          ",
-              },
-              [
-                _c("i", { staticClass: "bx bx-share bx-flip-horizontal" }),
-                _vm._v(" "),
-                _c("span", { staticClass: "text-sm font-semibold" }, [
-                  _vm._v("Share"),
-                ]),
-              ]
-            ),
-          ]),
-        ]
-      ),
-    ])
+    return _c(
+      "div",
+      {
+        staticClass:
+          "\n            w-1/3\n            flex\n            space-x-2\n            justify-center\n            items-center\n            hover:bg-gray-100\n            dark:hover:bg-dark-third\n            text-xl\n            py-2\n            rounded-lg\n            cursor-pointer\n            text-gray-500\n            dark:text-dark-txt\n          ",
+      },
+      [
+        _c("i", { staticClass: "bx bx-comment" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "text-sm font-semibold" }, [
+          _vm._v("Comment"),
+        ]),
+      ]
+    )
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c(
+      "div",
+      {
+        staticClass:
+          "\n            w-1/3\n            flex\n            space-x-2\n            justify-center\n            items-center\n            hover:bg-gray-100\n            dark:hover:bg-dark-third\n            text-xl\n            py-2\n            rounded-lg\n            cursor-pointer\n            text-gray-500\n            dark:text-dark-txt\n          ",
+      },
+      [
+        _c("i", { staticClass: "bx bx-share bx-flip-horizontal" }),
+        _vm._v(" "),
+        _c("span", { staticClass: "text-sm font-semibold" }, [_vm._v("Share")]),
+      ]
+    )
   },
   function () {
     var _vm = this
@@ -32677,11 +32735,8 @@ var render = function () {
         [
           _vm.newsStatus.newsPostsStatus == "Loading"
             ? _c("div", [_c("scale-loader")], 1)
-            : _vm._l(_vm.newsPosts.data, function (post) {
-                return _c("post", {
-                  key: post.data.post_id,
-                  attrs: { post: post },
-                })
+            : _vm._l(_vm.newsPosts.data, function (post, postKey) {
+                return _c("post", { key: postKey, attrs: { post: post } })
               }),
         ],
         2

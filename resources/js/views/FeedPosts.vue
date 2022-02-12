@@ -14,7 +14,7 @@
            <div v-if="newsStatus.newsPostsStatus=='Loading'">
            <scale-loader  ></scale-loader>
            </div>
-          <post v-else v-for="post in newsPosts.data" :key="post.data.post_id" :post="post"/>
+          <post v-else v-for="(post,postKey) in newsPosts.data" :key="postKey" :post="post"/>
              
 
             </div>

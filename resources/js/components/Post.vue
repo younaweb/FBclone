@@ -74,7 +74,7 @@
     <div class="px-4 py-2">
       <div class="flex items-center justify-between">
         <div class="flex flex-row-reverse items-center">
-          <span class="ml-2 text-gray-500 dark:text-dark-txt">999</span>
+          <span class="ml-2 text-gray-500 dark:text-dark-txt">{{post.data.attributes.likes.like_count}} likes</span>
           <span
             class="
               rounded-full
@@ -147,6 +147,8 @@
               text-gray-500
               dark:text-dark-txt
             "
+            @click="$store.dispatch('makeLike',{postId:post.data.post_id,postKey:$vnode.key})"
+            :class="[post.data.attributes.likes.user_like_post ?'bg-blue-600 text-white hover:bg-blue-400':'']"
           >
             <i class="bx bx-like"></i>
             <span class="text-sm font-semibold">Like</span>
