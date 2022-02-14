@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class PostCollection extends ResourceCollection
+class LikeCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -14,11 +14,13 @@ class PostCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-       return [
-            'data'=>$this->collection,
-            'links'=>[
-                'self'=>url('/posts'),
+        return [
+            'data' => $this->collection,
+            'like_count'=>$this->count(),
+            'user_like_post'=>$this->collection->contains('id',auth()->user()->id),
+            'links' => [
+                'self' => url('/posts'),
             ]
-            ];
+        ];
     }
 }

@@ -26,7 +26,7 @@ export default {
     this.$store.dispatch("fetchAuthUser");
   },
   computed: {
-    ...mapGetters(["authUser"]),
+    ...mapGetters(["authUser","userStatus"]),
   },
   created() {
     this.$store.dispatch("fetchPageTitle", this.$route.meta.title);
