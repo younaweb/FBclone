@@ -21,7 +21,7 @@ class FriendRequestTest extends TestCase
         $response=$this->post('/api/friend-request',[
             'friend_id'=>$friend->id,
         ])
-        ->assertStatus(201);
+        ->assertStatus(200);
         $fr=Friend::first();
         $this->assertNotNull($fr);
         $this->assertEquals($friend->id,$fr->friend_id);
@@ -39,6 +39,25 @@ class FriendRequestTest extends TestCase
                 ]
         ]);
     }
+    /** @test */
+    public function a_user_can_send_friend_request_only_once()
+    {
+        $this->withoutExceptionHandling();
+        $user=User::factory()->create();
+        $this->actingAs($user,'api');
+        $friend=User::factory()->create();
+        $response=$this->post('/api/friend-request',[
+            'friend_id'=>$friend->id,
+        ])
+        ->assertStatus(200);
+        $response=$this->post('/api/friend-request',[
+            'friend_id'=>$friend->id,
+        ])
+        ->assertStatus(200);
+        $fr=Friend::all();
+        $this->assertCount(1,$fr);
+       
+    }
 
     /** @test */
     public function friend_request_can_be_accepted()
@@ -50,7 +69,7 @@ class FriendRequestTest extends TestCase
         $response=$this->post('/api/friend-request',[
             'friend_id'=>$anotherUser->id,
         ])
-        ->assertStatus(201);
+        ->assertStatus(200);
         $this->actingAs($anotherUser,'api');
         $response=$this->post('/api/friend-request-response',[
             
@@ -84,7 +103,7 @@ class FriendRequestTest extends TestCase
         $response=$this->post('/api/friend-request',[
             'friend_id'=>$anotherUser->id,
         ])
-        ->assertStatus(201);
+        ->assertStatus(200);
         $this->actingAs($anotherUser,'api');
 
         $response=$this->delete('/api/friend-request-response/hammasouya',[
@@ -110,7 +129,7 @@ class FriendRequestTest extends TestCase
             'friend_id'=>$anotherUser->id,
         ])
 
-        ->assertStatus(201);
+        ->assertStatus(200);
         $user2=User::factory()->create();
         $this->actingAs($user2,'api');
         $response=$this->delete('/api/friend-request-response/hammasouya',[

@@ -11,10 +11,10 @@
 
             <div>
 
-           <div v-if="loading">
+           <div v-if="newsStatus.newsPostsStatus=='Loading'">
            <scale-loader  ></scale-loader>
            </div>
-          <post v-else v-for="post in posts.data" :key="post.data.post_id" :post="post"/>
+          <post v-else v-for="(post,postKey) in newsPosts.data" :key="postKey" :post="post"/>
              
 
             </div>
@@ -28,28 +28,24 @@
 import NewPost from "../components/NewPost.vue"
 import Post from "../components/Post.vue"
 import ScaleLoader from 'vue-spinner/src/ScaleLoader.vue'
+import {mapGetters} from 'vuex'
 export default {
   components:{
     NewPost,
     Post,
     ScaleLoader,
   },
-  data(){
-    return{
-      posts:null,
-      loading:true,
-    }
-  },
+ 
   mounted(){
-    axios.get('api/posts')
-    .then(res => {
-      this.posts=res.data;
-      this.loading=false;
-    })
-    .catch(err => {
-      console.error(err); 
-      this.loading=false;
-    })
+    this.$store.dispatch('fetchNewsPosts');
+  },
+  computed:{
+    ...mapGetters([
+      'newsPosts',
+      'newsStatus'
+
+
+    ])
   }
 
 }

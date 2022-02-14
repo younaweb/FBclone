@@ -18,13 +18,11 @@ class PostToTimeLineTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user, 'api');
         $response = $this->post('/api/posts', [
-            'data' => [
-                'type' => 'posts',
-                'attributes' => [
+            
                     'body' => 'Testing body',
-                ]
+                
             ]
-        ]);
+        );
         $post = Post::first();
         $this->assertEquals($user->id, $post->user_id);
         $response->assertStatus(201)

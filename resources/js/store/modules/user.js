@@ -1,6 +1,6 @@
 const state={
     user:null,
-    userStatus:true,
+    userStatus:null,
 };
 const getters={
    
@@ -13,20 +13,25 @@ const getters={
 };
 const actions={
     fetchAuthUser({commit,state}){
+        this.commit('setUserStatus',"Loading")
+
         axios.get('/api/auth-user')
         .then(res => {
             this.commit('setAuthUser',res.data)
+            this.commit('setUserStatus',"Success")
         })
         .catch(err => {
-            console.error(err); 
-        }).finally(()=>{
-            state.userStatus=false;
+            this.commit('setUserStatus',"Error")
+            ; 
         })
     }
 };
 const mutations={
     setAuthUser(state,user){
         state.user=user;
+    },
+    setUserStatus(state,user){
+        state.userStatus=user;
     }
 };
 

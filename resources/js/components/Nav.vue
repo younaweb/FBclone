@@ -1,6 +1,6 @@
 <template>
    <!-- NAV -->
-    <nav class="bg-white dark:bg-dark-second h-max md:h-14 w-full shadow flex flex-col md:flex-row items-center justify-center md:justify-between fixed top-0 z-50 border-b dark:border-dark-third">
+    <nav  class="bg-white dark:bg-dark-second h-max md:h-14 w-full shadow flex flex-col md:flex-row items-center justify-center md:justify-between fixed top-0 z-50 border-b dark:border-dark-third">
 
         <!-- LEFT NAV -->
         <div class="flex items-center justify-between w-full md:w-max px-4 py-2">
@@ -64,11 +64,11 @@
 
         <!-- RIGHT NAV -->
         <ul class="hidden md:flex mx-4 items-center justify-center">
-            <li v-if="userStatus">loading...</li>
-            <li class="h-full hidden xl:flex" v-else>
+            <li v-if="userStatus=='Loading'">loading...</li>
+            <li class="h-full hidden xl:flex" v-else-if="userStatus=='Success'">
                 <router-link :to="'/users/'+authUser.data.user_id" class="inline-flex items-center justify-center p-1 rounded-full hover:bg-gray-200 dark:hover:bg-dark-third mx-1">
                     <img :src="'/images/tuat.jpg'" alt="Profile picture" class="rounded-full h-7 w-7">
-                    <span class="mx-2 font-semibold dark:text-dark-txt">Tuat</span>
+                    <span class="mx-2 font-semibold dark:text-dark-txt">{{authUser.data.attributes.name}}</span>
                 </router-link>
             </li>
             <li>
