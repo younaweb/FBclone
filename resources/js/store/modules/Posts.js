@@ -2,6 +2,8 @@ const state={
     newsPosts:null,
     newsStatus:null,
     postMessage:'',
+    commentContent:'',
+    showComment:false,
 };
 const getters={
    
@@ -17,6 +19,12 @@ const getters={
     },
     postMessage:state=>{
         return state.postMessage
+    },
+    commentContent:state=>{
+        return state.commentContent
+    },
+    showComment:state=>{
+        return state.showComment
     }
 };
 const actions={
@@ -48,6 +56,17 @@ const actions={
         .catch(err => {
         })
     },
+    storePostComment({commit,state},data){
+        axios.post('/api/posts/'+data.postId+'/comment',{body:data.body})
+        .then(res => {
+            this.commit('pushComment',{comments:res.data,key:data.postKey});
+            this.commit('setCommentContent','')
+            this.commit('setShowComment',true)
+
+        })
+        .catch(err => {
+        })
+    }
 
 };
 const mutations={
@@ -56,6 +75,12 @@ const mutations={
     },
     setNewsPosts(state,posts){
         state.newsPosts=posts;
+    },
+    setShowComment(state,value){
+        state.showComment=value;
+    },
+    setCommentContent(state,text){
+        state.commentContent=text;
     },
     updateMessage(state,message){
         state.postMessage=message
@@ -66,7 +91,12 @@ const mutations={
     pushLike(state,data){
         state.newsPosts.data[data.key].data.attributes.likes=data.like
 
+    },
+    pushComment(state,data){
+        state.newsPosts.data[data.key].data.attributes.comments=data.comments
+
     }
+
 };
 
 export default {

@@ -134,8 +134,8 @@
       </div>
       <post
         v-else
-        v-for="post in getPosts.data"
-        :key="post.data.post_id"
+        v-for="(post,postKey) in getPosts.data"
+        :key="postKey"
         :post="post"
       />
     </div>

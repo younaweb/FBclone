@@ -5689,6 +5689,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -5866,236 +5873,22 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  props: ["post"]
+  props: ["post"],
+  computed: _objectSpread({
+    commentContent: {
+      get: function get() {
+        return this.$store.getters.commentContent;
+      },
+      set: function set(commentContent) {
+        this.$store.commit('setCommentContent', commentContent);
+      }
+    }
+  }, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)(['showComment'])),
+  data: function data() {
+    return {};
+  }
 });
 
 /***/ }),
@@ -6693,7 +6486,9 @@ __webpack_require__.r(__webpack_exports__);
 var state = {
   newsPosts: null,
   newsStatus: null,
-  postMessage: ''
+  postMessage: '',
+  commentContent: '',
+  showComment: false
 };
 var getters = {
   newsPosts: function newsPosts(state) {
@@ -6706,6 +6501,12 @@ var getters = {
   },
   postMessage: function postMessage(state) {
     return state.postMessage;
+  },
+  commentContent: function commentContent(state) {
+    return state.commentContent;
+  },
+  showComment: function showComment(state) {
+    return state.showComment;
   }
 };
 var actions = {
@@ -6747,6 +6548,24 @@ var actions = {
         key: data.postKey
       });
     })["catch"](function (err) {});
+  },
+  storePostComment: function storePostComment(_ref4, data) {
+    var _this4 = this;
+
+    var commit = _ref4.commit,
+        state = _ref4.state;
+    axios.post('/api/posts/' + data.postId + '/comment', {
+      body: data.body
+    }).then(function (res) {
+      _this4.commit('pushComment', {
+        comments: res.data,
+        key: data.postKey
+      });
+
+      _this4.commit('setCommentContent', '');
+
+      _this4.commit('setShowComment', true);
+    })["catch"](function (err) {});
   }
 };
 var mutations = {
@@ -6756,6 +6575,12 @@ var mutations = {
   setNewsPosts: function setNewsPosts(state, posts) {
     state.newsPosts = posts;
   },
+  setShowComment: function setShowComment(state, value) {
+    state.showComment = value;
+  },
+  setCommentContent: function setCommentContent(state, text) {
+    state.commentContent = text;
+  },
   updateMessage: function updateMessage(state, message) {
     state.postMessage = message;
   },
@@ -6764,6 +6589,9 @@ var mutations = {
   },
   pushLike: function pushLike(state, data) {
     state.newsPosts.data[data.key].data.attributes.likes = data.like;
+  },
+  pushComment: function pushComment(state, data) {
+    state.newsPosts.data[data.key].data.attributes.comments = data.comments;
   }
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -31637,7 +31465,7 @@ var render = function () {
     "div",
     {
       staticClass:
-        "\n    shadow\n    bg-white\n    dark:bg-dark-second dark:text-dark-txt\n    mt-4\n    rounded-lg\n  ",
+        "shadow bg-white dark:bg-dark-second dark:text-dark-txt mt-4 rounded-lg",
     },
     [
       _c(
@@ -31653,26 +31481,26 @@ var render = function () {
               _vm._v(" "),
               _c("span", {
                 staticClass:
-                  "\n            bg-green-500\n            w-3\n            h-3\n            rounded-full\n            absolute\n            right-0\n            top-3/4\n            border-white border-2\n          ",
+                  "bg-green-500 w-3 h-3 rounded-full absolute right-0 top-3/4 border-white border-2",
               }),
             ]),
             _vm._v(" "),
             _c("div", [
               _c("div", { staticClass: "font-semibold" }, [
                 _vm._v(
-                  "\n          " +
+                  "\n                    " +
                     _vm._s(
                       _vm.post.data.attributes.posted_by.data.attributes.name
                     ) +
-                    "\n        "
+                    "\n                "
                 ),
               ]),
               _vm._v(" "),
               _c("span", { staticClass: "text-sm text-gray-500" }, [
                 _vm._v(
-                  "\n          " +
+                  "\n                    " +
                     _vm._s(_vm.post.data.attributes.posted_at) +
-                    "\n        "
+                    "\n                "
                 ),
               ]),
             ]),
@@ -31683,7 +31511,7 @@ var render = function () {
       ),
       _vm._v(" "),
       _c("div", { staticClass: "text-justify px-4 py-2" }, [
-        _vm._v("\n    " + _vm._s(_vm.post.data.attributes.body) + "\n  "),
+        _vm._v("\n        " + _vm._s(_vm.post.data.attributes.body) + "\n    "),
       ]),
       _vm._v(" "),
       _vm.post.data.attributes.image
@@ -31714,7 +31542,14 @@ var render = function () {
             _vm._m(3),
           ]),
           _vm._v(" "),
-          _vm._m(4),
+          _c("div", { staticClass: "text-gray-500 dark:text-dark-txt" }, [
+            _c("span", [
+              _vm._v(
+                _vm._s(_vm.post.data.attributes.comments.comment_count) +
+                  " comments"
+              ),
+            ]),
+          ]),
         ]),
       ]),
       _vm._v(" "),
@@ -31723,7 +31558,7 @@ var render = function () {
           "div",
           {
             staticClass:
-              "\n        border border-gray-200\n        dark:border-dark-third\n        border-l-0 border-r-0\n        py-1\n      ",
+              "border border-gray-200 dark:border-dark-third border-l-0 border-r-0 py-1",
           },
           [
             _c("div", { staticClass: "flex space-x-2" }, [
@@ -31731,7 +31566,7 @@ var render = function () {
                 "div",
                 {
                   staticClass:
-                    "\n            w-1/3\n            flex\n            space-x-2\n            justify-center\n            items-center\n            hover:bg-gray-100\n            dark:hover:bg-dark-third\n            text-xl\n            py-2\n            rounded-lg\n            cursor-pointer\n            text-gray-500\n            dark:text-dark-txt\n          ",
+                    "w-1/3 flex space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl py-2 rounded-lg cursor-pointer text-gray-500 dark:text-dark-txt",
                   class: [
                     _vm.post.data.attributes.likes.user_like_post
                       ? "bg-blue-600 text-white hover:bg-blue-400"
@@ -31755,59 +31590,90 @@ var render = function () {
                 ]
               ),
               _vm._v(" "),
-              _vm._m(5),
-              _vm._v(" "),
-              _vm._m(6),
+              _c(
+                "div",
+                {
+                  staticClass:
+                    "w-1/3 flex space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl py-2 rounded-lg cursor-pointer text-gray-500 dark:text-dark-txt",
+                },
+                [
+                  _c("i", { staticClass: "bx bx-comment" }),
+                  _vm._v(" "),
+                  _c(
+                    "span",
+                    {
+                      staticClass: "text-sm font-semibold",
+                      on: {
+                        click: function ($event) {
+                          _vm.showComment = !_vm.showComment
+                        },
+                      },
+                    },
+                    [_vm._v("Comment")]
+                  ),
+                ]
+              ),
             ]),
           ]
         ),
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "py-2 px-4" }, [
-        _c("div", { staticClass: "flex space-x-2" }, [
-          _c("img", {
-            staticClass: "w-9 h-9 rounded-full",
-            attrs: { src: "/images/avt-5.jpg", alt: "Profile picture" },
-          }),
-          _vm._v(" "),
-          _c("div", [
-            _vm._m(7),
-            _vm._v(" "),
-            _vm._m(8),
-            _vm._v(" "),
-            _c("div", { staticClass: "flex space-x-2" }, [
-              _c("img", {
-                staticClass: "w-9 h-9 rounded-full",
-                attrs: { src: "/images/avt-7.jpg", alt: "Profile picture" },
-              }),
-              _vm._v(" "),
-              _vm._m(9),
-            ]),
-          ]),
-        ]),
-        _vm._v(" "),
-        _c("div", { staticClass: "flex space-x-2" }, [
-          _c("img", {
-            staticClass: "w-9 h-9 rounded-full",
-            attrs: { src: "/images/avt-5.jpg", alt: "Profile picture" },
-          }),
-          _vm._v(" "),
-          _c("div", [
-            _vm._m(10),
-            _vm._v(" "),
-            _vm._m(11),
-            _vm._v(" "),
-            _c("div", { staticClass: "flex space-x-2" }, [
-              _c("img", {
-                staticClass: "w-9 h-9 rounded-full",
-                attrs: { src: "/images/avt-7.jpg", alt: "Profile picture" },
-              }),
-              _vm._v(" "),
-              _vm._m(12),
-            ]),
-          ]),
-        ]),
-      ]),
+      _vm.showComment
+        ? _c(
+            "div",
+            { staticClass: "py-2 px-4" },
+            _vm._l(_vm.post.data.attributes.comments.data, function (comment) {
+              return _c(
+                "div",
+                { key: comment.comment_id, staticClass: "flex space-x-2" },
+                [
+                  _c("img", {
+                    staticClass: "w-9 h-9 rounded-full",
+                    attrs: { src: "/images/avt-5.jpg", alt: "Profile picture" },
+                  }),
+                  _vm._v(" "),
+                  _c("div", [
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "bg-gray-100 dark:bg-dark-third p-2 rounded-2xl text-sm",
+                      },
+                      [
+                        _c("span", { staticClass: "font-semibold block" }, [
+                          _vm._v(
+                            _vm._s(
+                              comment.data.attributes.commented_by.data
+                                .attributes.name
+                            )
+                          ),
+                        ]),
+                        _vm._v(" "),
+                        _c("span", [
+                          _vm._v(_vm._s(comment.data.attributes.body)),
+                        ]),
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "div",
+                      {
+                        staticClass:
+                          "p-2 text-xs text-gray-500 dark:text-dark-txt",
+                      },
+                      [
+                        _c("span", { staticClass: "font-semibold" }, [
+                          _vm._v(_vm._s(comment.data.attributes.commented_at)),
+                        ]),
+                      ]
+                    ),
+                  ]),
+                ]
+              )
+            }),
+            0
+          )
+        : _vm._e(),
       _vm._v(" "),
       _c("div", { staticClass: "py-2 px-4" }, [
         _c("div", { staticClass: "flex space-x-2" }, [
@@ -31816,7 +31682,55 @@ var render = function () {
             attrs: { src: "/images/tuat.jpg", alt: "Profile picture" },
           }),
           _vm._v(" "),
-          _vm._m(13),
+          _c(
+            "div",
+            {
+              staticClass:
+                "flex-1 flex bg-gray-100 dark:bg-dark-third rounded-full items-center justify-between px-3",
+            },
+            [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.commentContent,
+                    expression: "commentContent",
+                  },
+                ],
+                staticClass: "outline-none bg-transparent flex-1",
+                attrs: { type: "text", placeholder: "Write a comment..." },
+                domProps: { value: _vm.commentContent },
+                on: {
+                  input: function ($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.commentContent = $event.target.value
+                  },
+                },
+              }),
+              _vm._v(" "),
+              _vm.commentContent
+                ? _c(
+                    "div",
+                    {
+                      staticClass: "flex space-x-0 items-center justify-center",
+                      on: {
+                        click: function ($event) {
+                          return _vm.$store.dispatch("storePostComment", {
+                            postId: _vm.post.data.post_id,
+                            body: _vm.commentContent,
+                            postKey: _vm.$vnode.key,
+                          })
+                        },
+                      },
+                    },
+                    [_vm._m(4)]
+                  )
+                : _vm._e(),
+            ]
+          ),
         ]),
       ]),
     ]
@@ -31831,7 +31745,7 @@ var staticRenderFns = [
       "div",
       {
         staticClass:
-          "\n        w-8\n        h-8\n        grid\n        place-items-center\n        text-xl text-gray-500\n        hover:bg-gray-200\n        dark:text-dark-txt dark:hover:bg-dark-third\n        rounded-full\n        cursor-pointer\n      ",
+          "w-8 h-8 grid place-items-center text-xl text-gray-500 hover:bg-gray-200 dark:text-dark-txt dark:hover:bg-dark-third rounded-full cursor-pointer",
       },
       [_c("i", { staticClass: "bx bx-dots-horizontal-rounded" })]
     )
@@ -31844,7 +31758,7 @@ var staticRenderFns = [
       "span",
       {
         staticClass:
-          "\n            rounded-full\n            grid\n            place-items-center\n            text-2xl\n            -ml-1\n            text-red-800\n          ",
+          "rounded-full grid place-items-center text-2xl -ml-1 text-red-800",
       },
       [_c("i", { staticClass: "bx bxs-angry" })]
     )
@@ -31857,7 +31771,7 @@ var staticRenderFns = [
       "span",
       {
         staticClass:
-          "\n            rounded-full\n            grid\n            place-items-center\n            text-2xl\n            -ml-1\n            text-red-500\n          ",
+          "rounded-full grid place-items-center text-2xl -ml-1 text-red-500",
       },
       [_c("i", { staticClass: "bx bxs-heart-circle" })]
     )
@@ -31870,7 +31784,7 @@ var staticRenderFns = [
       "span",
       {
         staticClass:
-          "\n            rounded-full\n            grid\n            place-items-center\n            text-2xl\n            -ml-1\n            text-yellow-500\n          ",
+          "rounded-full grid place-items-center text-2xl -ml-1 text-yellow-500",
       },
       [_c("i", { staticClass: "bx bx-happy-alt" })]
     )
@@ -31879,276 +31793,13 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "text-gray-500 dark:text-dark-txt" }, [
-      _c("span", [_vm._v("90 comments")]),
-      _vm._v(" "),
-      _c("span", [_vm._v("66 Shares")]),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
     return _c(
-      "div",
+      "span",
       {
         staticClass:
-          "\n            w-1/3\n            flex\n            space-x-2\n            justify-center\n            items-center\n            hover:bg-gray-100\n            dark:hover:bg-dark-third\n            text-xl\n            py-2\n            rounded-lg\n            cursor-pointer\n            text-gray-500\n            dark:text-dark-txt\n          ",
+          "w-7 h-7 grid place-items-center rounded-full hover:bg-gray-200 cursor-pointer text-blue-500 dark:text-dark-txt dark:hover:bg-dark-second text-xl",
       },
-      [
-        _c("i", { staticClass: "bx bx-comment" }),
-        _vm._v(" "),
-        _c("span", { staticClass: "text-sm font-semibold" }, [
-          _vm._v("Comment"),
-        ]),
-      ]
-    )
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass:
-          "\n            w-1/3\n            flex\n            space-x-2\n            justify-center\n            items-center\n            hover:bg-gray-100\n            dark:hover:bg-dark-third\n            text-xl\n            py-2\n            rounded-lg\n            cursor-pointer\n            text-gray-500\n            dark:text-dark-txt\n          ",
-      },
-      [
-        _c("i", { staticClass: "bx bx-share bx-flip-horizontal" }),
-        _vm._v(" "),
-        _c("span", { staticClass: "text-sm font-semibold" }, [_vm._v("Share")]),
-      ]
-    )
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "bg-gray-100 dark:bg-dark-third p-2 rounded-2xl text-sm" },
-      [
-        _c("span", { staticClass: "font-semibold block" }, [
-          _vm._v("John Doe"),
-        ]),
-        _vm._v(" "),
-        _c("span", [
-          _vm._v("Lorem ipsum dolor sit amet consectetur adipisicing elit."),
-        ]),
-      ]
-    )
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "p-2 text-xs text-gray-500 dark:text-dark-txt" },
-      [
-        _c("span", { staticClass: "font-semibold cursor-pointer" }, [
-          _vm._v("Like"),
-        ]),
-        _vm._v(" "),
-        _c("span", [_vm._v(".")]),
-        _vm._v(" "),
-        _c("span", { staticClass: "font-semibold cursor-pointer" }, [
-          _vm._v("Reply"),
-        ]),
-        _vm._v(" "),
-        _c("span", [_vm._v(".")]),
-        _vm._v("\n          10m\n        "),
-      ]
-    )
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c(
-        "div",
-        {
-          staticClass: "bg-gray-100 dark:bg-dark-third p-2 rounded-2xl text-sm",
-        },
-        [
-          _c("span", { staticClass: "font-semibold block" }, [
-            _vm._v("John Doe"),
-          ]),
-          _vm._v(" "),
-          _c("span", [
-            _vm._v(
-              "Lorem ipsum dolor sit amet consectetur adipisicing\n                elit."
-            ),
-          ]),
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "p-2 text-xs text-gray-500 dark:text-dark-txt" },
-        [
-          _c("span", { staticClass: "font-semibold cursor-pointer" }, [
-            _vm._v("Like"),
-          ]),
-          _vm._v(" "),
-          _c("span", [_vm._v(".")]),
-          _vm._v(" "),
-          _c("span", { staticClass: "font-semibold cursor-pointer" }, [
-            _vm._v("Reply"),
-          ]),
-          _vm._v(" "),
-          _c("span", [_vm._v(".")]),
-          _vm._v("\n              10m\n            "),
-        ]
-      ),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "bg-gray-100 dark:bg-dark-third p-2 rounded-2xl text-sm" },
-      [
-        _c("span", { staticClass: "font-semibold block" }, [
-          _vm._v("John Doe"),
-        ]),
-        _vm._v(" "),
-        _c("span", [
-          _vm._v(
-            "Lorem ipsum dolor sit amet consectetur, adipisicing elit. In\n            voluptate ipsa animi corrupti unde, voluptatibus expedita\n            suscipit, itaque, laudantium accusantium aspernatur officia\n            repellendus nihil mollitia soluta distinctio praesentium nulla\n            eos?"
-          ),
-        ]),
-      ]
-    )
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      { staticClass: "p-2 text-xs text-gray-500 dark:text-dark-txt" },
-      [
-        _c("span", { staticClass: "font-semibold cursor-pointer" }, [
-          _vm._v("Like"),
-        ]),
-        _vm._v(" "),
-        _c("span", [_vm._v(".")]),
-        _vm._v(" "),
-        _c("span", { staticClass: "font-semibold cursor-pointer" }, [
-          _vm._v("Reply"),
-        ]),
-        _vm._v(" "),
-        _c("span", [_vm._v(".")]),
-        _vm._v("\n          10m\n        "),
-      ]
-    )
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", [
-      _c(
-        "div",
-        {
-          staticClass: "bg-gray-100 dark:bg-dark-third p-2 rounded-2xl text-sm",
-        },
-        [
-          _c("span", { staticClass: "font-semibold block" }, [
-            _vm._v("John Doe"),
-          ]),
-          _vm._v(" "),
-          _c("span", [
-            _vm._v(
-              "Lorem ipsum dolor sit amet consectetur adipisicing\n                elit."
-            ),
-          ]),
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        { staticClass: "p-2 text-xs text-gray-500 dark:text-dark-txt" },
-        [
-          _c("span", { staticClass: "font-semibold cursor-pointer" }, [
-            _vm._v("Like"),
-          ]),
-          _vm._v(" "),
-          _c("span", [_vm._v(".")]),
-          _vm._v(" "),
-          _c("span", { staticClass: "font-semibold cursor-pointer" }, [
-            _vm._v("Reply"),
-          ]),
-          _vm._v(" "),
-          _c("span", [_vm._v(".")]),
-          _vm._v("\n              10m\n            "),
-        ]
-      ),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c(
-      "div",
-      {
-        staticClass:
-          "\n          flex-1 flex\n          bg-gray-100\n          dark:bg-dark-third\n          rounded-full\n          items-center\n          justify-between\n          px-3\n        ",
-      },
-      [
-        _c("input", {
-          staticClass: "outline-none bg-transparent flex-1",
-          attrs: { type: "text", placeholder: "Write a comment..." },
-        }),
-        _vm._v(" "),
-        _c(
-          "div",
-          { staticClass: "flex space-x-0 items-center justify-center" },
-          [
-            _c(
-              "span",
-              {
-                staticClass:
-                  "\n              w-7\n              h-7\n              grid\n              place-items-center\n              rounded-full\n              hover:bg-gray-200\n              cursor-pointer\n              text-gray-500\n              dark:text-dark-txt dark:hover:bg-dark-second\n              text-xl\n            ",
-              },
-              [_c("i", { staticClass: "bx bx-smile" })]
-            ),
-            _vm._v(" "),
-            _c(
-              "span",
-              {
-                staticClass:
-                  "\n              w-7\n              h-7\n              grid\n              place-items-center\n              rounded-full\n              hover:bg-gray-200\n              cursor-pointer\n              text-gray-500\n              dark:text-dark-txt dark:hover:bg-dark-second\n              text-xl\n            ",
-              },
-              [_c("i", { staticClass: "bx bx-camera" })]
-            ),
-            _vm._v(" "),
-            _c(
-              "span",
-              {
-                staticClass:
-                  "\n              w-7\n              h-7\n              grid\n              place-items-center\n              rounded-full\n              hover:bg-gray-200\n              cursor-pointer\n              text-gray-500\n              dark:text-dark-txt dark:hover:bg-dark-second\n              text-xl\n            ",
-              },
-              [_c("i", { staticClass: "bx bxs-file-gif" })]
-            ),
-            _vm._v(" "),
-            _c(
-              "span",
-              {
-                staticClass:
-                  "\n              w-7\n              h-7\n              grid\n              place-items-center\n              rounded-full\n              hover:bg-gray-200\n              cursor-pointer\n              text-gray-500\n              dark:text-dark-txt dark:hover:bg-dark-second\n              text-xl\n            ",
-              },
-              [_c("i", { staticClass: "bx bx-happy-heart-eyes" })]
-            ),
-          ]
-        ),
-      ]
+      [_c("i", { staticClass: "bx bx-send" })]
     )
   },
 ]
@@ -32914,11 +32565,8 @@ var render = function () {
             ? _c("div", [_c("scale-loader")], 1)
             : _vm.getPosts.data.length < 1
             ? _c("div", [_vm._v("\n      No posts yet ...get started\n    ")])
-            : _vm._l(_vm.getPosts.data, function (post) {
-                return _c("post", {
-                  key: post.data.post_id,
-                  attrs: { post: post },
-                })
+            : _vm._l(_vm.getPosts.data, function (post, postKey) {
+                return _c("post", { key: postKey, attrs: { post: post } })
               }),
         ],
         2
