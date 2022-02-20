@@ -1,20 +1,17 @@
 const state = {
     user: null,
     userStatus: null,
-    postsStatus: null,
-    posts: null,
+   
 };
 const getters = {
     getUser: (state) => {
         return state.user;
     },
-    getPosts: (state) => {
-        return state.posts;
-    },
+   
     getStatus: (state) => {
         return {
             user:state.userStatus,
-            posts:state.postsStatus,
+            posts:state.postStatus,
         };
     },
     getFriendShip: (state) => {
@@ -51,19 +48,7 @@ const actions = {
                 this.commit("setUserStatus", "error");
             });
     },
-    fetchUserPosts({ commit, actions }, userId) {
-        this.commit("setPostsStatus", "loading");
-
-        axios
-            .get("/api/users/" + userId + "/posts")
-            .then((res) => {
-                this.commit("setUserPosts", res.data);
-                this.commit("setPostsStatus", "success");
-            })
-            .catch((err) => {
-                this.commit("setPostsStatus", "error");
-            });
-    },
+    
     makeFriendRequest({ commit, getters }, friendId) {
         if (getters.getFriendButtonText == "Add Friend") {
             axios
@@ -97,15 +82,11 @@ const mutations = {
     setUser(state, user) {
         state.user = user;
     },
-    setUserPosts(state, posts) {
-        state.posts = posts;
-    },
+  
     setUserStatus(state, userStatus) {
         state.userStatus = userStatus;
     },
-    setPostsStatus(state, postsStatus) {
-        state.postsStatus = postsStatus;
-    },
+ 
     setFriendShip(state, text) {
         state.user.data.attributes.friendship = text;
     },

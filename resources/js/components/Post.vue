@@ -105,7 +105,7 @@
                         class="w-1/3 flex space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl py-2 rounded-lg cursor-pointer text-gray-500 dark:text-dark-txt"
                     >
                         <i class="bx bx-comment"></i>
-                        <span class="text-sm font-semibold" @click="showComment=!showComment">Comment</span>
+                        <span class="text-sm font-semibold" @click="xcomment=!xcomment">Comment</span>
                     </div>
                  
                 </div>
@@ -114,7 +114,7 @@
         <!-- END POST ACTION -->
 
         <!-- LIST COMMENT -->
-        <div class="py-2 px-4" v-if="showComment">
+        <div class="py-2 px-4" v-if="xcomment">
             <!-- COMMENT -->
             <div class="flex space-x-2" v-for="comment in post.data.attributes.comments.data" :key="comment.comment_id">
                 <img
@@ -161,7 +161,7 @@
                         class="outline-none bg-transparent flex-1"
                         v-model="commentContent"
                     />
-                    <div class="flex space-x-0 items-center justify-center" v-if="commentContent" @click="$store.dispatch('storePostComment',{postId: post.data.post_id,body:commentContent,postKey:$vnode.key})">
+                    <div class="flex space-x-0 items-center justify-center" v-if="commentContent" @click="$store.dispatch('storePostComment',{postId: post.data.post_id,body:commentContent,postKey:$vnode.key});xcomment=true">
                         <span
                             class="w-7 h-7 grid place-items-center rounded-full hover:bg-gray-200 cursor-pointer text-blue-500 dark:text-dark-txt dark:hover:bg-dark-second text-xl"
                             ><i class="bx bx-send"></i
@@ -178,9 +178,19 @@
 <script>
 import {mapGetters} from 'vuex'
 export default {
+    data(){
+        return {
+
+            xcomment:false,
+        
+        }
+
+      
+    },
     props: ["post"],
-    computed:{
     
+    computed:{
+        
          commentContent:{
             get(){
                 return this.$store.getters.commentContent
@@ -190,15 +200,9 @@ export default {
             }
 
         },
-        ...mapGetters(['showComment'])
      
     },
-    data(){
-      return{
-        
-       
-      }
-    }
+ 
 };
 </script>
 

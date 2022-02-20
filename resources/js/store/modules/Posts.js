@@ -1,19 +1,18 @@
 const state={
-    newsPosts:null,
-    newsStatus:null,
+    posts:null,
+    postStatus:null,
     postMessage:'',
     commentContent:'',
-    showComment:false,
 };
 const getters={
    
-    newsPosts: state => {
-        return state.newsPosts
+    posts: state => {
+        return state.posts
     },
-    newsStatus:state=>{
+    postStatus:state=>{
         return {
 
-            newsPostsStatus:state.newsStatus
+            postStatus:state.postStatus
         }
             
     },
@@ -22,22 +21,32 @@ const getters={
     },
     commentContent:state=>{
         return state.commentContent
-    },
-    showComment:state=>{
-        return state.showComment
     }
 };
 const actions={
-    fetchNewsPosts({commit,state}){
-        this.commit('setNewsStatus','Loading')
+    fetchPosts({commit,state}){
+        this.commit('setPostStatus','Loading')
         axios.get('/api/posts')
         .then(res => {
-            this.commit('setNewsPosts',res.data)
-            this.commit('setNewsStatus','Success')
+            this.commit('setPosts',res.data)
+            this.commit('setPostStatus','Success')
         })
         .catch(err => {
-             this.commit('setNewsStatus','Error')
+             this.commit('setPostStatus','Error')
         })
+    },
+    fetchUserPosts({ commit, actions }, userId) {
+        this.commit("setPostStatus", "loading");
+
+        axios
+            .get("/api/users/" + userId + "/posts")
+            .then((res) => {
+                this.commit("setPosts", res.data);
+                this.commit("setPostStatus", "success");
+            })
+            .catch((err) => {
+                this.commit("setPostStatus", "error");
+            });
     },
     storeNewMessage({commit,state}){
         axios.post('/api/posts',{ body: state.postMessage })
@@ -61,7 +70,6 @@ const actions={
         .then(res => {
             this.commit('pushComment',{comments:res.data,key:data.postKey});
             this.commit('setCommentContent','')
-            this.commit('setShowComment',true)
 
         })
         .catch(err => {
@@ -70,14 +78,11 @@ const actions={
 
 };
 const mutations={
-    setNewsStatus(state,status){
-        state.newsStatus=status;
+    setPostStatus(state,status){
+        state.postStatus=status;
     },
-    setNewsPosts(state,posts){
-        state.newsPosts=posts;
-    },
-    setShowComment(state,value){
-        state.showComment=value;
+    setPosts(state,posts){
+        state.posts=posts;
     },
     setCommentContent(state,text){
         state.commentContent=text;
@@ -86,14 +91,14 @@ const mutations={
         state.postMessage=message
     },
     pushMessage(state,message){
-        state.newsPosts.data.unshift(message)
+        state.posts.data.unshift(message)
     },
     pushLike(state,data){
-        state.newsPosts.data[data.key].data.attributes.likes=data.like
+        state.posts.data[data.key].data.attributes.likes=data.like
 
     },
     pushComment(state,data){
-        state.newsPosts.data[data.key].data.attributes.comments=data.comments
+        state.posts.data[data.key].data.attributes.comments=data.comments
 
     }
 
