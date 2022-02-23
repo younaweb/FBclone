@@ -490,6 +490,9 @@ Ensure the default browser behavior of the `hidden` attribute.
 .z-50 {
   z-index: 50;
 }
+.z-10 {
+  z-index: 10;
+}
 .m-0 {
   margin: 0px;
 }
@@ -608,6 +611,9 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 .h-28 {
   height: 7rem;
+}
+.h-32 {
+  height: 8rem;
 }
 .max-h-20 {
   max-height: 5rem;
@@ -1090,10 +1096,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
   .xl\:flex {
     display: flex;
-  }
-
-  .xl\:grid {
-    display: grid;
   }
 
   .xl\:w-max {

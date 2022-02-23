@@ -11,10 +11,10 @@
 
             <div>
 
-           <div v-if="newsStatus.newsPostsStatus=='Loading'">
+           <div v-if="postStatus.postStatus=='Loading'">
            <scale-loader  ></scale-loader>
            </div>
-          <post v-else v-for="(post,postKey) in newsPosts.data" :key="postKey" :post="post"/>
+          <post v-else v-for="(post,postKey) in posts.data" :key="postKey" :post="post"/>
              
 
             </div>
@@ -37,12 +37,12 @@ export default {
   },
  
   mounted(){
-    this.$store.dispatch('fetchNewsPosts');
+    this.$store.dispatch('fetchPosts');
   },
   computed:{
     ...mapGetters([
-      'newsPosts',
-      'newsStatus'
+      'posts',
+      'postStatus'
 
 
     ])
