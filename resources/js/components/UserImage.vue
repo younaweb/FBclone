@@ -4,7 +4,7 @@
         :class="classes"
        
         ref="userImg"
-        :src="imageObject.data.attributes.path"
+        :src="userIm.data.attributes.path"
         :alt="alt"
       />
     
@@ -13,20 +13,24 @@
 
 <script>
 import dropZone from 'dropzone';
+import { mapGetters } from "vuex";
 export default {
     name:'UserImage',
     data(){
         return{
             zoneImage:null,
-            uploadedImage:null,
+            
         }
     },
     mounted(){
-        this.zoneImage= new dropZone(this.$refs.userImg,this.settings) 
+       if(this.authUser.data.user_id== this.$route.params.userId){
+            this.zoneImage= new dropZone(this.$refs.userImg,this.settings) 
+       }
 
     },
     props:['imageHeight','imageWidth','imageLocation','userIm','classes','alt'],
     computed:{
+        ...mapGetters(['authUser']),
         settings(){
             return{
 
@@ -43,13 +47,15 @@ export default {
                     },
                 success:(e,res) =>{
                     // console.log('data =====>',res);
-                    this.uploadedImage=res;
+                   
+                        this.$store.dispatch('fetchPosts');
+                        this.$store.dispatch('fetchAuthUser');
+                    this.$store.dispatch("fetchUser", this.$route.params.userId);
+
                 }
             }
-        },
-        imageObject(){
-            return this.uploadedImage || this.userIm;
         }
+        
     }
 
 

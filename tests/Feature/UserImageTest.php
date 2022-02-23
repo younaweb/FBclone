@@ -38,8 +38,8 @@ class UserImageTest extends TestCase
         Storage::disk('public')->assertExists('user-images/' . $file->hashName());
         $userImage = UserImage::first();
         $this->assertEquals('user-images/' . $file->hashName(), $userImage->path);
-        $this->assertEquals(600, $userImage->width);
-        $this->assertEquals(870, $userImage->height);
+        $this->assertEquals('600', $userImage->width);
+        $this->assertEquals('870', $userImage->height);
         $this->assertEquals('cover', $userImage->location);
         $response->assertJson([
             'data' => [

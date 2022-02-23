@@ -65,22 +65,14 @@
         <!-- RIGHT NAV -->
         <ul class="hidden md:flex mx-4 items-center justify-center">
             <li v-if="userStatus=='Loading'">loading...</li>
-            <li class="h-full hidden xl:flex" v-else-if="userStatus=='Success'">
+            <li class="h-full hidden xl:flex" v-else-if="userStatus=='success'">
                 <router-link :to="'/users/'+authUser.data.user_id" class="inline-flex items-center justify-center p-1 rounded-full hover:bg-gray-200 dark:hover:bg-dark-third mx-1">
-                    <img :src="'/images/tuat.jpg'" alt="Profile picture" class="rounded-full h-7 w-7">
+                    <img           :src="authUser.data.attributes.profile_image.data.attributes.path" 
+ alt="Profile picture" class="rounded-full h-7 w-7">
                     <span class="mx-2 font-semibold dark:text-dark-txt">{{authUser.data.attributes.name}}</span>
                 </router-link>
             </li>
-            <li>
-                <div class="text-xl hidden xl:grid place-items-center bg-gray-200 dark:bg-dark-third dark:text-dark-txt rounded-full mx-1 p-3 cursor-pointer hover:bg-gray-300 relative">
-                    <i class='bx bx-plus'></i>
-                </div>
-            </li>
-            <li>
-                <div class="text-xl hidden xl:grid place-items-center bg-gray-200 dark:bg-dark-third dark:text-dark-txt rounded-full mx-1 p-3 cursor-pointer hover:bg-gray-300 relative">
-                    <i class='bx bxl-messenger'></i>
-                </div>
-            </li>
+          
             <li>
                 <div class="text-xl grid place-items-center bg-gray-200 dark:bg-dark-third dark:text-dark-txt rounded-full mx-1 p-3 cursor-pointer hover:bg-gray-300 relative">
                     <i class='bx bxs-bell'></i>

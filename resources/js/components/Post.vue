@@ -8,7 +8,7 @@
             <div class="flex space-x-2 items-center">
                 <div class="relative">
                     <img
-                        :src="'/images/avt-2.jpg'"
+                    :src="post.data.attributes.posted_by.data.attributes.profile_image.data.attributes.path"
                         alt="Profile picture"
                         class="w-10 h-10 rounded-full"
                     />
@@ -42,7 +42,7 @@
         <!-- END POST CONTENT -->
 
         <!-- POST IMAGE -->
-        <div class="py-2" v-if="post.data.attributes.image">
+        <div class="py-2" v-if="post.data.attributes.image!='http://fbclone.test/storage'">
             <img :src="post.data.attributes.image" alt="Post image" />
         </div>
         <!-- END POST IMAGE -->
@@ -118,7 +118,7 @@
             <!-- COMMENT -->
             <div class="flex space-x-2" v-for="comment in post.data.attributes.comments.data" :key="comment.comment_id">
                 <img
-                    :src="'/images/avt-5.jpg'"
+                    :src="comment.data.attributes.commented_by.data.attributes.profile_image.data.attributes.path"
                     alt="Profile picture"
                     class="w-9 h-9 rounded-full"
                 />
@@ -147,11 +147,8 @@
         <!-- COMMENT FORM -->
         <div class="py-2 px-4">
             <div class="flex space-x-2">
-                <img
-                    :src="'/images/tuat.jpg'"
-                    alt="Profile picture"
-                    class="w-9 h-9 rounded-full"
-                />
+                    <img :src="authUser.data.attributes.profile_image.data.attributes.path" alt="Profile picture" class="w-10 h-10 rounded-full">
+
                 <div
                     class="flex-1 flex bg-gray-100 dark:bg-dark-third rounded-full items-center justify-between px-3"
                 >
@@ -190,7 +187,7 @@ export default {
     props: ["post"],
     
     computed:{
-        
+        ...mapGetters(['authUser']),
          commentContent:{
             get(){
                 return this.$store.getters.commentContent

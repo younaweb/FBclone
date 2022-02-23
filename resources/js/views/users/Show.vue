@@ -20,8 +20,8 @@
       "
     >
       <user-image
-        image-width="1200"
-        image-height="500"
+        image-width="1500"
+        image-height="700"
         image-location="cover"
         :user-im='getUser.data.attributes.cover_image'
         :classes="'max-h-20 w-full opacity-80 absolute top-0'"
@@ -29,8 +29,8 @@
       />
       <div class="profile w-full flex m-3 ml-4 text-white">
         <user-image
-        image-width="1200"
-        image-height="500"
+        image-width="750"
+        image-height="750"
         image-location="profile"
         :user-im='getUser.data.attributes.profile_image'
         class="z-10"

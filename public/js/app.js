@@ -5321,6 +5321,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -5487,7 +5494,10 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({});
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)(['authUser']))
+});
 
 /***/ }),
 
@@ -5601,14 +5611,6 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)(['authUser', 'userStatus'])),
@@ -5628,6 +5630,88 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+/* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dropzone */ "./node_modules/dropzone/dist/dropzone.js");
+/* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dropzone__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5663,15 +5747,69 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  computed: {
+  data: function data() {
+    return {
+      postImage: null
+    };
+  },
+  mounted: function mounted() {
+    this.postImage = new (dropzone__WEBPACK_IMPORTED_MODULE_0___default())(this.$refs.postImg, this.settings);
+  },
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)(["authUser"])), {}, {
+    settings: function settings() {
+      var _this = this;
+
+      return {
+        paramName: "image",
+        url: "/api/posts",
+        acceptedFiles: "image/*",
+        clickable: ".dz-clicable",
+        autoProcessQueue: false,
+        maxFiles: 1,
+        previewsContainer: ".dropzone-previews",
+        previewTemplate: document.querySelector("#dz-template").innerHTML,
+        params: {
+          width: 1200,
+          height: 500
+        },
+        sending: function sending(file, xhr, formData) {
+          formData.append("body", _this.$store.getters.postMessage);
+        },
+        headers: {
+          "X-CSRF-TOKEN": document.head.querySelector("meta[name=csrf-token]").content
+        },
+        success: function success(e, res) {
+          _this.postImage.removeAllFiles();
+
+          _this.$store.commit("pushMessage", res);
+        },
+        maxfilesexceeded: function maxfilesexceeded(file) {
+          _this.postImage.removeAllFiles();
+
+          _this.postImage.addFile(file);
+        }
+      };
+    },
     postMessage: {
       get: function get() {
         return this.$store.getters.postMessage;
       },
       set: function set(postMessage) {
-        this.$store.commit('updateMessage', postMessage);
+        this.$store.commit("updateMessage", postMessage);
       }
+    }
+  }),
+  methods: {
+    postHandler: function postHandler() {
+      if (this.postImage.getAcceptedFiles().length) {
+        this.postImage.processQueue();
+      } else {
+        this.$store.dispatch("storeNewMessage");
+      }
+
+      this.$store.commit("updateMessage", "");
     }
   }
 });
@@ -5689,9 +5827,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-//
-//
-//
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -5874,7 +6016,7 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   props: ["post"],
-  computed: {
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_0__.mapGetters)(['authUser'])), {}, {
     commentContent: {
       get: function get() {
         return this.$store.getters.commentContent;
@@ -5883,7 +6025,7 @@ __webpack_require__.r(__webpack_exports__);
         this.$store.commit('setCommentContent', commentContent);
       }
     }
-  }
+  })
 });
 
 /***/ }),
@@ -6085,6 +6227,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! dropzone */ "./node_modules/dropzone/dist/dropzone.js");
 /* harmony import */ var dropzone__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(dropzone__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -6099,19 +6248,21 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'UserImage',
   data: function data() {
     return {
-      zoneImage: null,
-      uploadedImage: null
+      zoneImage: null
     };
   },
   mounted: function mounted() {
-    this.zoneImage = new (dropzone__WEBPACK_IMPORTED_MODULE_0___default())(this.$refs.userImg, this.settings);
+    if (this.authUser.data.user_id == this.$route.params.userId) {
+      this.zoneImage = new (dropzone__WEBPACK_IMPORTED_MODULE_0___default())(this.$refs.userImg, this.settings);
+    }
   },
   props: ['imageHeight', 'imageWidth', 'imageLocation', 'userIm', 'classes', 'alt'],
-  computed: {
+  computed: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapGetters)(['authUser'])), {}, {
     settings: function settings() {
       var _this = this;
 
@@ -6129,14 +6280,15 @@ __webpack_require__.r(__webpack_exports__);
         },
         success: function success(e, res) {
           // console.log('data =====>',res);
-          _this.uploadedImage = res;
+          _this.$store.dispatch('fetchPosts');
+
+          _this.$store.dispatch('fetchAuthUser');
+
+          _this.$store.dispatch("fetchUser", _this.$route.params.userId);
         }
       };
-    },
-    imageObject: function imageObject() {
-      return this.uploadedImage || this.userIm;
     }
-  }
+  })
 });
 
 /***/ }),
@@ -11963,7 +12115,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.fade-enter-active[data-v-4f84dfc5], .fade-leave-active[data-v-4f84dfc5] {\n    transition: opacity .5s;\n}\n.fade-enter[data-v-4f84dfc5], .fade-leave-to[data-v-4f84dfc5] {\n    opacity: 0;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.fade-enter-active[data-v-4f84dfc5],\n.fade-leave-active[data-v-4f84dfc5] {\n  transition: opacity 0.5s;\n}\n.fade-enter[data-v-4f84dfc5],\n.fade-leave-to[data-v-4f84dfc5] {\n  opacity: 0;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -34399,7 +34551,11 @@ var render = function () {
             [
               _c("img", {
                 staticClass: "w-10 h-10 rounded-full",
-                attrs: { src: "/images/tuat.jpg", alt: "Profile picture" },
+                attrs: {
+                  src: _vm.authUser.data.attributes.profile_image.data
+                    .attributes.path,
+                  alt: "Profile picture",
+                },
               }),
               _vm._v(" "),
               _c("span", { staticClass: "font-semibold" }, [
@@ -34667,7 +34823,7 @@ var render = function () {
         [
           _vm.userStatus == "Loading"
             ? _c("li", [_vm._v("loading...")])
-            : _vm.userStatus == "Success"
+            : _vm.userStatus == "success"
             ? _c(
                 "li",
                 { staticClass: "h-full hidden xl:flex" },
@@ -34683,7 +34839,8 @@ var render = function () {
                       _c("img", {
                         staticClass: "rounded-full h-7 w-7",
                         attrs: {
-                          src: "/images/tuat.jpg",
+                          src: _vm.authUser.data.attributes.profile_image.data
+                            .attributes.path,
                           alt: "Profile picture",
                         },
                       }),
@@ -34705,10 +34862,6 @@ var render = function () {
           _vm._m(6),
           _vm._v(" "),
           _vm._m(7),
-          _vm._v(" "),
-          _vm._m(8),
-          _vm._v(" "),
-          _vm._m(9),
         ]
       ),
     ]
@@ -34882,36 +35035,6 @@ var staticRenderFns = [
         "div",
         {
           staticClass:
-            "text-xl hidden xl:grid place-items-center bg-gray-200 dark:bg-dark-third dark:text-dark-txt rounded-full mx-1 p-3 cursor-pointer hover:bg-gray-300 relative",
-        },
-        [_c("i", { staticClass: "bx bx-plus" })]
-      ),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("li", [
-      _c(
-        "div",
-        {
-          staticClass:
-            "text-xl hidden xl:grid place-items-center bg-gray-200 dark:bg-dark-third dark:text-dark-txt rounded-full mx-1 p-3 cursor-pointer hover:bg-gray-300 relative",
-        },
-        [_c("i", { staticClass: "bx bxl-messenger" })]
-      ),
-    ])
-  },
-  function () {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("li", [
-      _c(
-        "div",
-        {
-          staticClass:
             "text-xl grid place-items-center bg-gray-200 dark:bg-dark-third dark:text-dark-txt rounded-full mx-1 p-3 cursor-pointer hover:bg-gray-300 relative",
         },
         [
@@ -34981,7 +35104,11 @@ var render = function () {
         [
           _c("img", {
             staticClass: "w-10 h-10 rounded-full",
-            attrs: { src: "images/tuat.jpg", alt: "Profile picture" },
+            attrs: {
+              src: _vm.authUser.data.attributes.profile_image.data.attributes
+                .path,
+              alt: "Profile picture",
+            },
           }),
           _vm._v(" "),
           _c("input", {
@@ -34994,19 +35121,10 @@ var render = function () {
               },
             ],
             staticClass:
-              "flex-1 bg-gray-100 rounded-full flex items-center justify-start pl-4 cursor-pointer dark:bg-dark-third text-gray-500 text-lg dark:text-dark-txt",
+              "\n        flex-1\n        bg-gray-100\n        rounded-full\n        flex\n        items-center\n        justify-start\n        pl-4\n        cursor-pointer\n        dark:bg-dark-third\n        text-gray-500 text-lg\n        dark:text-dark-txt\n      ",
             attrs: { placeholder: "What's new ?", debounce: "500" },
             domProps: { value: _vm.postMessage },
             on: {
-              keyup: function ($event) {
-                if (
-                  !$event.type.indexOf("key") &&
-                  _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
-                ) {
-                  return null
-                }
-                return _vm.$store.dispatch("storeNewMessage")
-              },
               input: function ($event) {
                 if ($event.target.composing) {
                   return
@@ -35022,12 +35140,8 @@ var render = function () {
                   "button",
                   {
                     staticClass:
-                      "w-1/3 bg-gray-100 flex space-x-2 justify-center items-center hover:bg-gray-300 dark:hover:bg-dark-third text-xl sm:text-3xl py-2 rounded-lg cursor-pointer text-blue-500",
-                    on: {
-                      click: function ($event) {
-                        return _vm.$store.dispatch("storeNewMessage")
-                      },
-                    },
+                      "\n          w-1/3\n          bg-gray-100\n          flex\n          space-x-2\n          justify-center\n          items-center\n          hover:bg-gray-300\n          dark:hover:bg-dark-third\n          text-xl\n          sm:text-3xl\n          py-2\n          rounded-lg\n          cursor-pointer\n          text-blue-500\n        ",
+                    on: { click: _vm.postHandler },
                   },
                   [_c("i", { staticClass: "bx bx-message-add" })]
                 )
@@ -35037,7 +35151,30 @@ var render = function () {
         1
       ),
       _vm._v(" "),
-      _vm._m(0),
+      _c("div", { staticClass: "p-2 flex" }, [
+        _c(
+          "div",
+          {
+            ref: "postImg",
+            staticClass:
+              "\n        dz-clicable\n        w-1/3\n        flex\n        space-x-2\n        justify-center\n        items-center\n        hover:bg-gray-100\n        dark:hover:bg-dark-third\n        text-xl\n        sm:text-3xl\n        py-2\n        rounded-lg\n        cursor-pointer\n        text-green-500\n      ",
+          },
+          [
+            _c("i", { staticClass: "bx bx-images dz-clicable" }),
+            _vm._v(" "),
+            _c(
+              "span",
+              {
+                staticClass:
+                  "\n          text-xs\n          dz-clicable\n          sm:text-sm\n          font-semibold\n          text-gray-500\n          dark:text-dark-txt\n        ",
+              },
+              [_vm._v("Add Image")]
+            ),
+          ]
+        ),
+        _vm._v(" "),
+        _vm._m(0),
+      ]),
     ]
   )
 }
@@ -35046,66 +35183,30 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "p-2 flex" }, [
-      _c(
-        "div",
-        {
-          staticClass:
-            "w-1/3 flex space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl sm:text-3xl py-2 rounded-lg cursor-pointer text-red-500",
-        },
-        [
-          _c("i", { staticClass: "bx bxs-video-plus" }),
+    return _c("div", { staticClass: "dropzone-previews" }, [
+      _c("div", { staticClass: "hidden", attrs: { id: "dz-template" } }, [
+        _c("div", { staticClass: "dz-preview dz-file-preview mt-4" }, [
+          _c("div", { staticClass: "dz-details" }, [
+            _c("img", {
+              staticClass: "w-32 h-32",
+              attrs: { "data-dz-thumbnail": "" },
+            }),
+            _vm._v(" "),
+            _c(
+              "button",
+              { staticClass: "text-xs", attrs: { "data-dz-remove": "" } },
+              [_vm._v("REMOVE")]
+            ),
+          ]),
           _vm._v(" "),
-          _c(
-            "span",
-            {
-              staticClass:
-                "text-xs sm:text-sm font-semibold text-gray-500 dark:text-dark-txt",
-            },
-            [_vm._v("Live video")]
-          ),
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass:
-            "w-1/3 flex space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl sm:text-3xl py-2 rounded-lg cursor-pointer text-green-500",
-        },
-        [
-          _c("i", { staticClass: "bx bx-images" }),
-          _vm._v(" "),
-          _c(
-            "span",
-            {
-              staticClass:
-                "text-xs sm:text-sm font-semibold text-gray-500 dark:text-dark-txt",
-            },
-            [_vm._v("Live video")]
-          ),
-        ]
-      ),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass:
-            "w-1/3 flex space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl sm:text-3xl py-2 rounded-lg cursor-pointer text-yellow-500",
-        },
-        [
-          _c("i", { staticClass: "bx bx-smile" }),
-          _vm._v(" "),
-          _c(
-            "span",
-            {
-              staticClass:
-                "text-xs sm:text-sm font-semibold text-gray-500 dark:text-dark-txt",
-            },
-            [_vm._v("Live video")]
-          ),
-        ]
-      ),
+          _c("div", { staticClass: "dz-progress" }, [
+            _c("span", {
+              staticClass: "dz-upload",
+              attrs: { "data-dz-upload": "" },
+            }),
+          ]),
+        ]),
+      ]),
     ])
   },
 ]
@@ -35146,7 +35247,11 @@ var render = function () {
             _c("div", { staticClass: "relative" }, [
               _c("img", {
                 staticClass: "w-10 h-10 rounded-full",
-                attrs: { src: "/images/avt-2.jpg", alt: "Profile picture" },
+                attrs: {
+                  src: _vm.post.data.attributes.posted_by.data.attributes
+                    .profile_image.data.attributes.path,
+                  alt: "Profile picture",
+                },
               }),
               _vm._v(" "),
               _c("span", {
@@ -35184,7 +35289,7 @@ var render = function () {
         _vm._v("\n        " + _vm._s(_vm.post.data.attributes.body) + "\n    "),
       ]),
       _vm._v(" "),
-      _vm.post.data.attributes.image
+      _vm.post.data.attributes.image != "http://fbclone.test/storage"
         ? _c("div", { staticClass: "py-2" }, [
             _c("img", {
               attrs: { src: _vm.post.data.attributes.image, alt: "Post image" },
@@ -35299,7 +35404,11 @@ var render = function () {
                 [
                   _c("img", {
                     staticClass: "w-9 h-9 rounded-full",
-                    attrs: { src: "/images/avt-5.jpg", alt: "Profile picture" },
+                    attrs: {
+                      src: comment.data.attributes.commented_by.data.attributes
+                        .profile_image.data.attributes.path,
+                      alt: "Profile picture",
+                    },
                   }),
                   _vm._v(" "),
                   _c("div", [
@@ -35348,8 +35457,12 @@ var render = function () {
       _c("div", { staticClass: "py-2 px-4" }, [
         _c("div", { staticClass: "flex space-x-2" }, [
           _c("img", {
-            staticClass: "w-9 h-9 rounded-full",
-            attrs: { src: "/images/tuat.jpg", alt: "Profile picture" },
+            staticClass: "w-10 h-10 rounded-full",
+            attrs: {
+              src: _vm.authUser.data.attributes.profile_image.data.attributes
+                .path,
+              alt: "Profile picture",
+            },
           }),
           _vm._v(" "),
           _c(
@@ -36050,7 +36163,7 @@ var render = function () {
     _c("img", {
       ref: "userImg",
       class: _vm.classes,
-      attrs: { src: _vm.imageObject.data.attributes.path, alt: _vm.alt },
+      attrs: { src: _vm.userIm.data.attributes.path, alt: _vm.alt },
     }),
   ])
 }
@@ -36137,8 +36250,8 @@ var render = function () {
             [
               _c("user-image", {
                 attrs: {
-                  "image-width": "1200",
-                  "image-height": "500",
+                  "image-width": "1500",
+                  "image-height": "700",
                   "image-location": "cover",
                   "user-im": _vm.getUser.data.attributes.cover_image,
                   classes: "max-h-20 w-full opacity-80 absolute top-0",
@@ -36153,8 +36266,8 @@ var render = function () {
                   _c("user-image", {
                     staticClass: "z-10",
                     attrs: {
-                      "image-width": "1200",
-                      "image-height": "500",
+                      "image-width": "750",
+                      "image-height": "750",
                       "image-location": "profile",
                       "user-im": _vm.getUser.data.attributes.profile_image,
                       classes: "w-28 h-28 p-1 bg-white rounded-full ",
