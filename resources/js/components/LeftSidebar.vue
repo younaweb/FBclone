@@ -17,7 +17,7 @@
           "
         >
           <img
-            :src="'/images/tuat.jpg'"
+          :src="authUser.data.attributes.profile_image.data.attributes.path" 
             alt="Profile picture"
             class="w-10 h-10 rounded-full"
           />
@@ -165,7 +165,12 @@
 </template>
 
 <script>
-export default {};
+import { mapGetters } from 'vuex'
+export default {
+  computed:{
+    ...mapGetters(['authUser']),
+  }
+};
 </script>
 
 <style>

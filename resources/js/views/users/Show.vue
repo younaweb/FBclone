@@ -4,8 +4,9 @@
     <div v-if="getStatus.user == 'loading'">
       <scale-loader></scale-loader>
     </div>
+    
     <div
-      v-else-if="getUser.data && getStatus.user=='success'"
+      v-else-if="getUser.data && getStatus.user == 'success'"
       class="
         card
         border
@@ -18,18 +19,25 @@
         m-5
       "
     >
-      <img
-        class="max-h-20 w-full opacity-80 absolute top-0"
-        style="z-index: -1"
-        src="https://unsplash.com/photos/iFPBRwZ4I-M/download?force=true&w=640"
-        alt=""
+      <user-image
+        image-width="1500"
+        image-height="700"
+        image-location="cover"
+        :user-im='getUser.data.attributes.cover_image'
+        :classes="'max-h-20 w-full opacity-80 absolute top-0'"
+        :alt="'Cover Image not displayed'"
       />
       <div class="profile w-full flex m-3 ml-4 text-white">
-        <img
-          class="w-28 h-28 p-1 bg-white rounded-full"
-          src="https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?crop=faces&fit=crop&h=200&w=200&auto=compress&cs=tinysrgb"
-          alt=""
-        />
+        <user-image
+        image-width="750"
+        image-height="750"
+        image-location="profile"
+        :user-im='getUser.data.attributes.profile_image'
+        class="z-10"
+        :classes="'w-28 h-28 p-1 bg-white rounded-full '"
+        :alt="'profile image'"
+      />
+       
         <div class="title mt-11 ml-3 font-bold flex flex-col">
           <div class="name break-words">{{ getUser.data.attributes.name }}</div>
           <!--  add [dark] class for bright background -->
@@ -126,15 +134,14 @@
     <!-- LIST POST -->
 
     <div>
+ 
       <div v-if="getStatus.posts == 'loading'">
         <scale-loader></scale-loader>
       </div>
-      <div v-else-if="getPosts.data.length < 1">
-        No posts yet ...get started
-      </div>
+      <div v-else-if="posts.data.length < 1">No posts yet ...get started</div>
       <post
         v-else
-        v-for="(post,postKey) in getPosts.data"
+        v-for="(post, postKey) in posts.data"
         :key="postKey"
         :post="post"
       />
@@ -150,20 +157,24 @@
 import Post from "../../components/Post.vue";
 import ScaleLoader from "vue-spinner/src/ScaleLoader.vue";
 import { mapGetters } from "vuex";
+import UserImage from "../../components/UserImage.vue";
 export default {
   components: {
     Post,
     ScaleLoader,
+    UserImage,
   },
   data() {
-    return {};
+    return {
+      x: true,
+    };
   },
   mounted() {
     this.$store.dispatch("fetchUser", this.$route.params.userId);
     this.$store.dispatch("fetchUserPosts", this.$route.params.userId);
   },
   computed: {
-    ...mapGetters(["getUser", "getStatus", "getFriendButtonText", "getPosts"]),
+    ...mapGetters(["getUser", "getStatus", "getFriendButtonText", "posts"]),
   },
 };
 </script>

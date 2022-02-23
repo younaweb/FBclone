@@ -8,7 +8,7 @@
             <div class="flex space-x-2 items-center">
                 <div class="relative">
                     <img
-                        :src="'/images/avt-2.jpg'"
+                    :src="post.data.attributes.posted_by.data.attributes.profile_image.data.attributes.path"
                         alt="Profile picture"
                         class="w-10 h-10 rounded-full"
                     />
@@ -42,7 +42,7 @@
         <!-- END POST CONTENT -->
 
         <!-- POST IMAGE -->
-        <div class="py-2" v-if="post.data.attributes.image">
+        <div class="py-2" v-if="post.data.attributes.image!='http://fbclone.test/storage'">
             <img :src="post.data.attributes.image" alt="Post image" />
         </div>
         <!-- END POST IMAGE -->
@@ -105,7 +105,7 @@
                         class="w-1/3 flex space-x-2 justify-center items-center hover:bg-gray-100 dark:hover:bg-dark-third text-xl py-2 rounded-lg cursor-pointer text-gray-500 dark:text-dark-txt"
                     >
                         <i class="bx bx-comment"></i>
-                        <span class="text-sm font-semibold" @click="showComment=!showComment">Comment</span>
+                        <span class="text-sm font-semibold" @click="xcomment=!xcomment">Comment</span>
                     </div>
                  
                 </div>
@@ -114,11 +114,11 @@
         <!-- END POST ACTION -->
 
         <!-- LIST COMMENT -->
-        <div class="py-2 px-4" v-if="showComment">
+        <div class="py-2 px-4" v-if="xcomment">
             <!-- COMMENT -->
             <div class="flex space-x-2" v-for="comment in post.data.attributes.comments.data" :key="comment.comment_id">
                 <img
-                    :src="'/images/avt-5.jpg'"
+                    :src="comment.data.attributes.commented_by.data.attributes.profile_image.data.attributes.path"
                     alt="Profile picture"
                     class="w-9 h-9 rounded-full"
                 />
@@ -147,11 +147,8 @@
         <!-- COMMENT FORM -->
         <div class="py-2 px-4">
             <div class="flex space-x-2">
-                <img
-                    :src="'/images/tuat.jpg'"
-                    alt="Profile picture"
-                    class="w-9 h-9 rounded-full"
-                />
+                    <img :src="authUser.data.attributes.profile_image.data.attributes.path" alt="Profile picture" class="w-10 h-10 rounded-full">
+
                 <div
                     class="flex-1 flex bg-gray-100 dark:bg-dark-third rounded-full items-center justify-between px-3"
                 >
@@ -161,7 +158,7 @@
                         class="outline-none bg-transparent flex-1"
                         v-model="commentContent"
                     />
-                    <div class="flex space-x-0 items-center justify-center" v-if="commentContent" @click="$store.dispatch('storePostComment',{postId: post.data.post_id,body:commentContent,postKey:$vnode.key})">
+                    <div class="flex space-x-0 items-center justify-center" v-if="commentContent" @click="$store.dispatch('storePostComment',{postId: post.data.post_id,body:commentContent,postKey:$vnode.key});xcomment=true">
                         <span
                             class="w-7 h-7 grid place-items-center rounded-full hover:bg-gray-200 cursor-pointer text-blue-500 dark:text-dark-txt dark:hover:bg-dark-second text-xl"
                             ><i class="bx bx-send"></i
@@ -178,9 +175,19 @@
 <script>
 import {mapGetters} from 'vuex'
 export default {
+    data(){
+        return {
+
+            xcomment:false,
+        
+        }
+
+      
+    },
     props: ["post"],
-    computed:{
     
+    computed:{
+        ...mapGetters(['authUser']),
          commentContent:{
             get(){
                 return this.$store.getters.commentContent
@@ -190,15 +197,9 @@ export default {
             }
 
         },
-        ...mapGetters(['showComment'])
      
     },
-    data(){
-      return{
-        
-       
-      }
-    }
+ 
 };
 </script>
 
